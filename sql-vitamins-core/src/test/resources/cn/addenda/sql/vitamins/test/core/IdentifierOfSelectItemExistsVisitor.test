@@ -1,0 +1,104 @@
+  select b from b.a;false
+  select a.b from a;false
+  select c, (select count(b2.a) from b2 where a > 1) from b1 where c > 1;true
+  select c, (select count(a.a) from b2 where a > 1) from b1 where c > 1;false
+  select c, (select count(a.*) from b2 where a > 1) from b1 where c > 1;false
+  select c, (select count(a) from b2 where a > 1) from b1 where c > 1;true
+  select c, (select a from b where c > 1) from b2 where c < 1;true
+  select c, (select c from b2 where a > 1) from b1 where c > 1;false
+  select a from b where c > 1;true
+  select * from a where a.a > 1;false
+  select productline, ordervalue, round(percent_rank() over(order by ordervalue), 2) as percentile_rank from t t1;false
+  select extract(year from date_add(now(), interval 2 day)) as plus2Day from dual where #{aaa} = b;false
+  select '\'a\'' from dual;false
+  select timestampdiff(day, '2010-01-01', '2010-06-01') as result from dual;false
+  select a from A where (select c from C) and (select d from D);true
+  select b from a where (select c from C) and (select d from D);false
+  select a, b, (select c from C) as c from AB;true
+  select employee_name , `count` , salary , nth_value ( employee_name  , 2  ) over ( partition by department  order by salary  desc range between interval 30 second preceding and unbounded following    )   as second_highest_salary from basic_pays;false
+  select employee_name , `count` , salary , nth_value ( employee_name  , 2  ) over ( partition by department  order by salary  desc range between unbounded preceding  and unbounded following    )   as second_highest_salary from basic_pays;false
+  select employee_name , department , salary , nth_value ( employee_name  , 2  ) OVER ( PARTITION BY DEPARTMENT  order by salary  desc range BETWEEN unbounded preceding  and unbounded following    )   as second_highest_salary from basic_pays;false
+  select employee_name , department , salary , nth_value ( employee_name  , 2  ) over ( partition by department  order by salary  desc range between unbounded preceding  and unbounded following    )   as second_highest_salary from basic_pays;false
+  select employee_name , salary , nth_value ( employee_name  , 2  ) over ( order by salary  desc )   as second_highest_salary from basic_pays;false
+  select name , score , row_number (  ) over ( order by score   )   as row_num, cume_dist (  ) over ( order by score   )   as cume_dist_val from scores;false
+  select val , dense_rank (  ) over ( order by val   )   as my_rank from rankdemo;false
+  select sales_employee , fiscal_year , sale , dense_rank (  ) over ( partition by fiscal_year  order by sale  desc )   as sales_rank from sales;false
+  select employee_name , hours , first_value ( employee_name   ) over ( order by hours   )   as least_over_time from overtime;false
+  select employee_name , department , hours , first_value ( employee_name   ) over ( partition by department  order by hours   )   as least_over_time from overtime;false
+  select productline , order_year , order_value , lag ( order_value  , 1  ) over ( partition by productline  order by order_year   )   as prev_year_order_value from productline_sales;false
+  select employee_name , hours , last_value ( employee_name   ) over ( order by hours   range between unbounded preceding  and unbounded following    )   as highest_overtime_employee from overtime;false
+  select employee_name , department , hours , last_value ( employee_name   ) over ( partition by department  order by hours   range between unbounded preceding  and unbounded following    )   as most_overtime_employee from overtime;false
+  select customername , orderdate , lead ( orderdate  , 1  ) over ( partition by customernumber  order by orderdate   )   as nextorderdate from orders join customers;false
+  select employee_name , salary , nth_value ( employee_name  , 2  ) over ( order by salary  desc )   as second_highest_salary from basic_pays;false
+  select employee_name , department , salary , nth_value ( employee_name  , 2  ) over ( partition by department  order by salary  desc range between unbounded preceding  and unbounded following    )   as second_highest_salary from basic_pays;false
+  select val , ntile ( 3  ) over ( order by val   )   as group_no from ntiledemo;false
+  select productline , order_year , order_value , ntile ( 3  ) over ( partition by order_year  order by order_value  desc )   as product_line_group from productline_sales;false
+  select val , rank (  ) over ( order by val   )   as my_rank from rankdemo;false
+  select sales_employee , fiscal_year , sale , rank (  ) over ( partition by fiscal_year  order by sale  desc )   as sales_rank from sales;false
+  select row_number (  ) over ( order by productname   )   as row_num, productname , msrp  from products   order by productname;false
+  select productline , productname , quantityinstock , row_number (  ) over ( partition by productline  order by quantityinstock  desc )   as row_num from products;false
+  select id , name , row_number (  ) over ( partition by name  order by name   )   as row_num from rownumberdemo;false
+  select *  from  (  select productname , msrp , row_number (  ) over ( order by msrp   )   as row_num from products   )  t  where row_num  < 11  and row_num  > 20;false
+ select T.FLIGHT_ID , ROUTE_TOWARDS  from T_DISPATCH_FLIGHT_RELEASE  RELEASE ,  (  select FLIGHT_ID , max( MODIFY_TM  ) as LATEAST_TIME from T_DISPATCH_FLIGHT_RELEASE   where DELETE_FLAG  = 'N'  and FLIGHT_ID in ( ?, ?)  group by FLIGHT_ID )  T  where RELEASE.FLIGHT_ID  = ?  and RELEASE.MODIFY_TM  = ?   and T.FLIGHT_ID in ( ?, ?)  order by RELEASE.CREATE_TIME   limit ?;false
+ select  case a  when b  + 1  then '1' when b  + 2  then '2' else '3' end as A from  (  select 2 as a, 1 as b from dual   where a  = ?  )  A  where a  = ?;false
+ select  group_concat (  DELETE_FLAG ,  CREATOR  + '1'  separator ';' ) as a from t_fp_day_navigation   group by DELETE_FLAG, CREATOR having  group_concat (  DELETE_FLAG  + '1'  order by CREATOR  asc separator ';' ) != ''  order by  ( '1' + DELETE_FLAG   )  desc;false
+ select *  from STUDENT   order by CLASS  desc, NAME  asc;false
+ select a  from  (  select *  from A   )  aa  where a  > 100  and a  < 50;false
+ select date_add( A.date ,  interval 1 day )  as tomorrow from  (  select *  from a   )  A;false
+ select 1 as a from dual;false
+ select T.FLIGHT_ID , ROUTE_TOWARDS  from T_DISPATCH_FLIGHT_RELEASE  RELEASE ,  (  select FLIGHT_ID , max( MODIFY_TM  ) as LATEAST_TIME from T_DISPATCH_FLIGHT_RELEASE   where DELETE_FLAG  = 'N'  and FLIGHT_ID in ( 100838874, 100813825)  group by FLIGHT_ID )  T  where RELEASE.FLIGHT_ID  = T.FLIGHT_ID   and RELEASE.MODIFY_TM  = T.LATEAST_TIME    order by RELEASE.CREATE_TIME;false
+ select ts_user.* , ts_role.create_time , ts_role.create_user  from ts_user  join ts_role  on ts_user.user_id  = ts_role.create_user    where  (  select c.a  from  (  select 1 as a from dual   )  c  )  > ts_role.a   and  (  select c.a  from  (  select true as a from dual   )  c  );false
+ select distinct SNO  from SCORE  SCX  where  not exists  (  select *  from SCORE  SCY  where SCY.SNO  = '2002151122'  and  not exists  (  select *  from SCORE  SCZ  where SCZ.SNO  = SCX.Sno   and SCZ.CNO  = SCY.CNO    )   );false
+ select T.FLIGHT_ID , ROUTE_TOWARDS  from T_DISPATCH_FLIGHT_RELEASE  RELEASE ,  (  select FLIGHT_ID , max( MODIFY_TM  ) as LATEAST_TIME from T_DISPATCH_FLIGHT_RELEASE   where DELETE_FLAG  = 'N'  and FLIGHT_ID in ( ?, ?)  group by FLIGHT_ID )  T  where RELEASE.FLIGHT_ID  = T.FLIGHT_ID   and RELEASE.MODIFY_TM  = T.LATEAST_TIME;false
+ select T.FLIGHT_ID , ROUTE_TOWARDS  from T_DISPATCH_FLIGHT_RELEASE  RELEASE ,  (  select FLIGHT_ID , max( MODIFY_TM  ) as LATEAST_TIME from T_DISPATCH_FLIGHT_RELEASE   where DELETE_FLAG  = 'N'  and FLIGHT_ID in ( #{flightId1}, #{flightId2}, #{flightId3})  group by FLIGHT_ID )  T  where RELEASE.FLIGHT_ID  = T.FLIGHT_ID   and RELEASE.MODIFY_TM  = T.LATEAST_TIME;false
+ select t.a , b  from tab2  t cross join tab3   left join tab3  on tab4.e  = tab2.e    ,  (  select *  from tab5   )  t5  where t.m  = ?  and  exists  (  select 1 from tab4  t4  where t1.n  = t4.n   )   and t.tm  >= '2016-11-11';true
+ select SNO , SNAME , SBIRTHDAY , date_format( now(), 'yyyy' )  as anow from STUDENT   where date_format( SBIRTHDAY , 'yyyy' )  =  (  select date_format( SBIRTHDAY , 'yyyy' )  as t from STUDENT   where SNO  = '108'  );false
+ select SNO , CNO  from SCORE   where DEGREE not in  (  select max( DEGREE  ) as maxd from SCORE   );false
+ select a.SNO , a.CNO  from SCORE  a ,  (  select max( DEGREE  ) as MAX from SCORE   )  b  where b.MAX  = SCORE.DEGREE;false
+ select 1 from  (  select a  from dual  d1 join dual  d2 on d1.id  = d2.outer_id    )  t1  where  (  select 2 from dual   )  > t1.a;false
+ select 1 from dual   where  (  select c  as d from t1   where id  = 5  )  >  (  select a  from t2   where id  = 6  );true
+ select 1 from dual  union  select 2 from dual  union  select 3 from dual  union  select 4 from dual  union  select 5 from dual;false
+ select 1 from dual  minus  select 2 from dual  union  select 3 from dual;false
+ select *  from ts_user   where  (  select c.a  from  (  select true as a from dual   )  c  )  and  (  select c.a  from  (  select true as a from dual   )  c  );false
+ select *  from t1  , t2   where t1.a  =  (  select b  from t2   where t1.c  = t2.c   );false
+ select *  from ts_user   where  (  select c.a  from  (  select true as a from dual   )  c  );false
+ select *  from ts_user   where  (  select 1 from dual   )  = 1;false
+ select now() as a from dual;false
+ select 1 from dual;false
+ select - ( 1 * SCORE   )  as score from dual;false
+ select *  from SCORE   where DEGREE  > 60  and DEGREE  < 80;false
+ select *  from SCORE   order by CNO  asc, DEGREE  desc;false
+ select avg( DEGREE  ) as avgd from SCORE   where CNO  = '3-105';false
+ select avg( DEGREE  ) as avgd from SCORE   where CNO  like '3%'  group by CNO having count( CNO  ) > 5;false
+ select SNO  from SCORE   group by SNO having min( DEGREE  ) > 70  and max( DEGREE  ) < 90;false
+ select STUDENT.SNAME , SCORE.CNO , SCORE.DEGREE  from STUDENT  , SCORE   where STUDENT.SNO  = SCORE.SNO;false
+ select STUDENT.SNAME , COURSE.CNAME , SCORE.DEGREE  from SCORE  , COURSE   , STUDENT   where STUDENT.SNO  = SCORE.SNO   and SCORE.CNO  = COURSE.CNO;false
+ select SCORE.SNO , SCORE.CNO , GRADE.RANK  from SCORE  , GRADE   where SCORE.DEGREE  >= GRADE.LOW   and SCORE.DEGREE  <= GRADE.UPP;false
+ select *  from SCORE   where SCORE.CNO  = '3-105'  and  (  select DEGREE  from SCORE   where SNO  = '109'  and CNO  = '3-105'   )  < SCORE.DEGREE;false
+ select *  from SCORE   where SCORE.CNO  = ?  and  (  select DEGREE  from SCORE   where SNO  = '?'  and CNO  = '3-105'   )  < SCORE.DEGREE;false
+ select *  from SCORE  ,  (  select SNO , max( DEGREE  ) as MAXDEGREE from SCORE   group by SNO having count( *  ) > 1  )  b  where b.SNO  = a.SNO   and b.MAXDEGREE  > a.DEGREE;false
+ select *  from SCORE  a  where  (  (  select max( b.DEGREE  ) as maxd from SCORE  b  where a.SNO  = b.SNO   )  > a.DEGREE   )  and  ( a.SNO in  (  select c.SNO  from SCORE   group by c.SNO having count( *  ) > 1  )  );false
+ select *  from SCORE   where  (  select DEGREE  from SCORE   where SNO  = '109'  and CNO  = '3-105'   )  < DEGREE;false
+ select *  from SCORE   where CNO in  (  select CNO  from COURSE   where  (  select TNO  from TEACHER   where TNAME  = '张旭'  )  = COURSE.TNO   );false
+ select TNAME  from TEACHER   where TNO in  (  select TNO  from COURSE   where CNO in  (  select CNO  from SCORE   group by CNO having count( *  ) > 5  )  );false
+ select *  from SCORE  a  where a.CNO  = '3-105'  and a.DEGREE  >=  (  select min( DEGREE  ) as c from SCORE  b  where b.CNO  = '3-245'  )    order by DEGREE  desc;false
+ select SNO , a.CNO , DEGREE  from SCORE  a ,  (  select avg( DEGREE  ) as AVGG, CNO  from SCORE   group by CNO )  b  where a.CNO  = b.CNO   and a.DEGREE  < b.AVGG;false
+ select *  from SCORE  a  where  (  select avg( b.DEGREE  ) as a from SCORE  b  where a.CNO  = b.CNO   )  > a.DEGREE;false
+ select TNAME , DEPART  from TEACHER   where TEACHER.TNO not in  (  select distinct TNO  from COURSE   );false
+ select *  from STUDENT   where SSEX  =  (  select SSEX  from STUDENT   where SNAME  = '李军'  )   and CLASS  =  (  select CLASS  from STUDENT   where SNAME  = '李军'  )    and SNAME  != '李军';false
+ select *  from SCORE  a  where  (  select count( *  ) as a from SCORE  b  where a.CNO  = b.CNO   and a.DEGREE  < b.DEGREE    )  < 2;false
+ select *  from SCORE  minus  select *  from SCORE  a  where  (  select count( *  ) as a from SCORE  b  where a.CNO  = b.CNO   and a.DEGREE  < b.DEGREE    )  < 1;false
+ select SNAME  from STUDENT   where  exists  (  select *  from SCORE   where SNO  = STUDENT.SNO   and CNO  = '1'   );false
+ select *  from  (  select 'rupert', 'somewhere', '022' from dual   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  and 1 = 2   )  limit 1;false
+ select t.a , b  from tab2  t left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5  where t.m  = ?  and  exists  (  select 1 from tab4  t4  where t1.n  = t4.n   )   and t.tm  >= '2016-11-11';true
+ select *  from A   where a  is null;false
+ select *  from A   where a  is not null;false
+ select  case a  when b  + 1  then '1' when b  + 2  then '2' else '3' end as A from  (  select 2 as a, 1 as b from dual   )  A;false
+ select t1.* , t2.*  from t1  , t2   where t1.id  = t2.outerId;false
+ select *  from A   where a  = 1.12;false
+ select tab2.a , b  from tab2  left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5;true
+ select tab2.a , b  from tab2  left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5  lock in share mode;true
+ select tab2.a , b  from tab2  left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5  for update;true
+ select tab2.a , b  from tab2  left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5  limit 1 for update;true
+ select tab2.a , b  from tab2  left join tab3  on tab2.c  = tab3.c   and tab2.d  = tab2.c     ,  (  select *  from tab5   )  t5  limit 1 offset 2 for update;true
+ select *  from  (  select 'rupert', 'some  where', '022' from dual   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1;false

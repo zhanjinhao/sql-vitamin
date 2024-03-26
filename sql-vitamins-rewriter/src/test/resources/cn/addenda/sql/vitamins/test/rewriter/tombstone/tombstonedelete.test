@@ -1,0 +1,8 @@
+delete from score where id in (select outer_id from t1);update score set if_del = 1 where id in (select outer_id from t1 where t1.if_del=0) and score.if_del = 0
+delete from A where id in (1, 2, 3);update A set if_del = 1 where id in (1, 2, 3) and A.if_del = 0
+delete from score where CREATE_TM  < date_add( now(),  interval 1 day )   and DEGREE  + 1  < 60 - 1;update score set if_del = 1 where CREATE_TM  < date_add( now(),  interval 1 day )   and DEGREE  + 1  < 60 - 1 and score.if_del = 0
+delete from score where DEGREE  < 50;update score set if_del = 1 where DEGREE  < 50 and score.if_del = 0
+delete from score where CREATE_TM  < now();update score set   if_del = 1  where CREATE_TM  < now() and score.if_del = 0
+delete from score where CREATE_TM  < now(3);update score set   if_del = 1 where CREATE_TM  < now(3)  and score.if_del = 0
+delete from score where DEGREE  + 1  < 60 - 1;update score set  if_del = 1  where DEGREE  + 1  < 60 - 1  and score.if_del = 0
+delete from score;update score set if_del = 1 where score.if_del = 0

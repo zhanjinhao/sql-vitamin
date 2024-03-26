@@ -1,0 +1,30 @@
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=a  + 1 , b=c;true
+  INSERT INTO `dao-easy-test`.t_a (t_a.id, t_a.a, t_a.b_id, t_a.version) VALUES (5, 'a5', 5, 6);true
+  update A set a = 1 where id in (1, 2, 3);true
+  update runoob_tbl set runoob_title= replace( runoob_title , 'c++', 'python' ) where id in (select outer_id from A);false
+  update runoob_tbl set runoob_title= replace( runoob_title , 'c++', 'python' ), c = a where id in (select outer_id from A);false
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=?  + 1 , b=?;true
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' )  where runoob_id  = 3;false
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' );false
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=a  + 1 , b=c;true
+  update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , b=c where a =1; false
+  insert  into table_listnames ( name, address, tele )   select *  from  (  select 'rupert', 'somewhere', '022' from dual   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1;false
+  insert  into table_listnames ( name, address, tele )   select *  from  (  select 'rupert', 'somewhere', '022' from dual   )  tmp  where  not exists  (  select name  from table_listnames   where a  = 'rupert'  )  limit 1;false
+  insert into auto_filled_test(name) values ('1\\2');false
+  insert into auto_filled_test(name) values ('1\'2');false
+  insert  into table_listnames ( name, address, tele )  select *  from  (  select 'rupert', 'somewhere', '022' from dual   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1;false
+  insert into t_rule set a = ?, rule_code = ?, rule_name = ?, table_name = ?, `condition` = ?, status = ?;true
+  insert into t_cdc_test(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d) values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?);false
+  insert into score ( SNO, CNO, DEGREE ) values ( 109, '\3-105', 76 );false
+  insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76 );false
+  insert  into score ( SNO, CNO, a ) values ( 109, '3-105', 76 );true
+  insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', DEGREE  + 76  )  on duplicate key update SNO=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1;false
+  insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', DEGREE  + 76  )  on duplicate key update a=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1;false
+  insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 );false
+  insert  into score ( SNO, CNO, DEGREE ) values ( ?, '3-105', ? ) ,  ( 109, ?, 76 ) ,  ( ?, '3-105', ? );false
+  insert  into score set SNO=109, CNO='3-105', DEGREE=76;false
+  insert  into score set SNO=109, CNO=date_format( now(), 'yyyy-dd-mm' ) , DEGREE=DEGREE  + 9  * 3;false
+  insert ignore into score set SNO=109, CNO='3-105', DEGREE=76;false
+  insert ignore into score set a=109, CNO='3-105', DEGREE=76;true
+  insert ignore into score set SNO=?, CNO='3-105', DEGREE=?;false
+  insert ignore into score set SNO='1387398', CNO=#{cno}, DEGREE=?;false

@@ -1,0 +1,17 @@
+insert into score(name) select a from A union select b from (select b from B) B2 union select c from C; insert into score(name, if_del) select a, 0 as if_del from A union select b, 0 as if_del from (select b from B ) B2 union select c, 0 as if_del from C
+insert into score(name) select a from A union select b from B union select c from C; insert into score(name, if_del) select a, 0 as if_del from A union select b, 0 as if_del from B union select c, 0 as if_del from C
+insert into auto_filled_test(name) values ('1\\2');insert into auto_filled_test(name, if_del) values ('1\\2', 0)
+insert into auto_filled_test(name) values ('1\'2');insert into auto_filled_test(name, if_del) values ('1\'2', 0)
+insert into t_rule set sqc = ?, rule_code = ?, rule_name = ?, table_name = ?, `condition` = ?, status = ?;insert into t_rule set sqc = ?, rule_code = ?, rule_name = ?, table_name = ?, `condition` = ?, status = ?, if_del=0
+insert  into table_listnames ( name, address, tele )  select *  from  (  select 'rupert', 'somewhere', '022' from c   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1;insert  into table_listnames ( name, address, tele, if_del )   select *, 0 as if_del  from  (  select 'rupert', 'somewhere', '022' from c)  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1
+insert into t_cdc_test(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d) values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?);insert into t_cdc_test(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d, if_del) values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?, 0)
+insert into score ( SNO, CNO, DEGREE ) values ( 109, '\3-105', 76);insert into score ( SNO, CNO, DEGREE , if_del) values ( 109, '\3-105', 76, 0)
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76);insert  into score ( SNO, CNO, DEGREE , if_del ) values ( 109, '3-105', 76, 0)
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', DEGREE  + 76  )  on duplicate key update SNO=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1;insert  into score ( SNO, CNO, DEGREE, if_del ) values ( 109, '3-105', DEGREE  + 76, 0 )  on duplicate key update SNO=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 );insert  into score ( SNO, CNO, DEGREE, if_del ) values ( 109, '3-105', 76 , 0 ) ,  ( 109, '3-105', 76 , 0 ) ,  ( 109, '3-105', 76 , 0 )
+insert  into score ( SNO, CNO, DEGREE ) values ( ?, '3-105', ? ) ,  ( 109, ?, 76 ) ,  ( ?, '3-105', ? );insert  into score ( SNO, CNO, DEGREE , if_del ) values ( ?, '3-105', ?, 0 ) ,  ( 109, ?, 76 ,0 ) ,  ( ?, '3-105', ? ,0 )
+insert  into score set SNO=109, CNO='3-105', DEGREE=76;insert  into score set SNO=109, CNO='3-105', DEGREE=76,if_del=0
+insert  into score set SNO=109, CNO=date_format( now(), 'yyyy-dd-mm' ) , DEGREE=DEGREE  + 9  * 3;insert  into score set SNO=109, CNO=date_format( now(), 'yyyy-dd-mm' ) , DEGREE=DEGREE  + 9  * 3, if_del=0
+insert ignore into score set SNO=109, CNO='3-105', DEGREE=76;insert ignore into score set SNO=109, CNO='3-105', DEGREE=76, if_del=0
+insert ignore into score set SNO=?, CNO='3-105', DEGREE=?;insert ignore into score set SNO=?, CNO='3-105', DEGREE=?,if_del=0
+insert ignore into score set SNO='1387398', CNO=#{cno}, DEGREE=?;insert ignore into score set SNO='1387398', CNO=#{cno}, DEGREE=?,if_del=0
