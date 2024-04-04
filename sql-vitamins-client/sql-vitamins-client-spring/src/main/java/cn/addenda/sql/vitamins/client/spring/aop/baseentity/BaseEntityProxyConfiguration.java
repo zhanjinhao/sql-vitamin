@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.baseentity;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityException;
-import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntitySqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntitySqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityRewriter;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
@@ -94,12 +94,12 @@ public class BaseEntityProxyConfiguration implements ImportAware {
   }
 
   public class BaseEntityBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<BaseEntitySqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<BaseEntitySqlInterceptor> {
 
     @Override
-    protected BaseEntitySqlRewriter getSqlRewriter() {
-      return new BaseEntitySqlRewriter(
-          removeEnter, disable, baseEntityRewriter, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+    protected BaseEntitySqlInterceptor getSqlInterceptor() {
+      return new BaseEntitySqlInterceptor(removeEnter, disable, baseEntityRewriter,
+          insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
     }
 
     @Override

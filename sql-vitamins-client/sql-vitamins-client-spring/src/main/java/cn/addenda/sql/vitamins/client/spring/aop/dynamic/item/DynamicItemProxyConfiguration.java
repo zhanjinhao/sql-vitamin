@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.dynamic.item;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
-import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemRewriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
@@ -80,11 +80,11 @@ public class DynamicItemProxyConfiguration implements ImportAware {
   }
 
   public class DynamicItemBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<DynamicItemSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<DynamicItemSqlInterceptor> {
 
     @Override
-    protected DynamicItemSqlRewriter getSqlRewriter() {
-      return new DynamicItemSqlRewriter(removeEnter, dynamicItemRewriter);
+    protected DynamicItemSqlInterceptor getSqlInterceptor() {
+      return new DynamicItemSqlInterceptor(removeEnter, dynamicItemRewriter);
     }
 
     @Override

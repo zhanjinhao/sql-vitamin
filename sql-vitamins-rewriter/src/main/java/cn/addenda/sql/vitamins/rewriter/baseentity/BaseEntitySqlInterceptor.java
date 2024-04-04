@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.rewriter.baseentity;
 
-import cn.addenda.sql.vitamins.rewriter.AbstractSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2023/5/2 17:33
  */
 @Slf4j
-public class BaseEntitySqlRewriter extends AbstractSqlRewriter {
+public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
 
   private final BaseEntityRewriter baseEntityRewriter;
   private final boolean defaultDisable;
@@ -22,7 +22,7 @@ public class BaseEntitySqlRewriter extends AbstractSqlRewriter {
   private final boolean defaultDuplicateKeyUpdate;
   private final UpdateItemMode defaultUpdateItemMode;
 
-  public BaseEntitySqlRewriter(
+  public BaseEntitySqlInterceptor(
       boolean removeEnter, boolean disable,
       BaseEntityRewriter baseEntityRewriter, InsertAddSelectItemMode insertAddSelectItemMode,
       boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
@@ -45,42 +45,59 @@ public class BaseEntitySqlRewriter extends AbstractSqlRewriter {
 
   @Override
   public String rewrite(String sql) {
-    if (!BaseEntityContext.contextActive()) {
-      return sql;
-    }
-
     Boolean disable = JdbcSQLUtils.getOrDefault(BaseEntityContext.getDisable(), defaultDisable);
     if (Boolean.TRUE.equals(disable)) {
       return sql;
     }
-    log.debug("Base Entity, before sql rewriting: [{}].", sql);
+    log.debug("Base Entity, before sql: [{}].", sql);
+
+    if (!BaseEntityContext.contextActive()) {
+      try {
+        BaseEntityContext.push(new BaseEntityConfig());
+        sql = doRewrite(sql);
+      } finally {
+        BaseEntityContext.remove();
+      }
+      return sql;
+    } else {
+      sql = doRewrite(sql);
+    }
+
+    log.debug("Base Entity, after sql: [{}].", sql);
+    return sql;
+  }
+
+  private String doRewrite(String sql) {
+    String newSql = sql;
     try {
-      if (JdbcSQLUtils.isSelect(sql)) {
-        sql = baseEntityRewriter.rewriteSelectSql(sql, BaseEntityContext.getMasterView());
-      } else if (JdbcSQLUtils.isUpdate(sql)) {
+      if (JdbcSQLUtils.isSelect(newSql)) {
+        newSql = baseEntityRewriter.rewriteSelectSql(newSql, BaseEntityContext.getMasterView());
+      } else if (JdbcSQLUtils.isUpdate(newSql)) {
         UpdateItemMode updateItemMode =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getUpdateItemMode(), defaultUpdateItemMode);
-        sql = baseEntityRewriter.rewriteUpdateSql(sql, updateItemMode);
-      } else if (JdbcSQLUtils.isInsert(sql)) {
+        newSql = baseEntityRewriter.rewriteUpdateSql(newSql, updateItemMode);
+      } else if (JdbcSQLUtils.isInsert(newSql)) {
         UpdateItemMode updateItemMode =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getUpdateItemMode(), defaultUpdateItemMode);
         Boolean duplicateKeyUpdate =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getDuplicateKeyUpdate(), defaultDuplicateKeyUpdate);
         InsertAddSelectItemMode insertAddSelectItemMode =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getInsertSelectAddItemMode(), defaultInsertAddSelectItemMode);
-        sql = baseEntityRewriter.rewriteInsertSql(sql, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+        newSql = baseEntityRewriter.rewriteInsertSql(newSql, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
       } else {
         throw new BaseEntityException("仅支持select、update、delete、insert语句，当前SQL：" + sql + "。");
       }
+    } catch (BaseEntityException baseEntityException) {
+      throw baseEntityException;
     } catch (Throwable throwable) {
       throw new BaseEntityException("基础字段填充时出错，SQL：" + sql + "。", ExceptionUtil.unwrapThrowable(throwable));
     }
-    log.debug("Base Entity, after sql rewriting: [{}].", sql);
-    return sql;
+    return newSql;
   }
 
   @Override
   public int order() {
     return MAX / 2 - 50000;
   }
+
 }

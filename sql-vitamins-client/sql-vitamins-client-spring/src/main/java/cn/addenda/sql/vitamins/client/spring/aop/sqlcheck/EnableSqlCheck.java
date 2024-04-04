@@ -25,6 +25,8 @@ public @interface EnableSqlCheck {
 
   String sqlChecker() default NamedConfigurer.DEFAULT;
 
+  boolean disable() default false;
+
   boolean checkAllColumn() default true;
 
   boolean checkExactIdentifier() default true;

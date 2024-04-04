@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.sqlcheck;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.sqlcheck.SqlCheckException;
-import cn.addenda.sql.vitamins.rewriter.sqlcheck.SqlCheckSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.sqlcheck.SqlCheckSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.sqlcheck.SqlChecker;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,7 @@ public class SqlCheckProxyConfiguration implements ImportAware {
   private int order;
   private boolean removeEnter;
   private SqlChecker sqlChecker;
+  private boolean disable;
   private boolean checkAllColumn;
   private boolean checkExactIdentifier;
   private boolean checkDmlCondition;
@@ -51,6 +52,7 @@ public class SqlCheckProxyConfiguration implements ImportAware {
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
+    this.disable = annotationAttributes.getBoolean("disable");
     this.checkAllColumn = annotationAttributes.getBoolean("checkAllColumn");
     this.checkExactIdentifier = annotationAttributes.getBoolean("checkExactIdentifier");
     this.checkDmlCondition = annotationAttributes.getBoolean("checkDmlCondition");
@@ -84,12 +86,12 @@ public class SqlCheckProxyConfiguration implements ImportAware {
   }
 
   public class SqlCheckBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<SqlCheckSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<SqlCheckSqlInterceptor> {
 
     @Override
-    protected SqlCheckSqlRewriter getSqlRewriter() {
-      return new SqlCheckSqlRewriter(
-          removeEnter, sqlChecker, checkAllColumn, checkExactIdentifier, checkDmlCondition);
+    protected SqlCheckSqlInterceptor getSqlInterceptor() {
+      return new SqlCheckSqlInterceptor(removeEnter, sqlChecker, disable,
+          checkAllColumn, checkExactIdentifier, checkDmlCondition);
     }
 
     @Override

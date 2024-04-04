@@ -4,7 +4,7 @@ package cn.addenda.sql.vitamins.rewriter;
  * @author addenda
  * @since 2024/3/31 16:03
  */
-public interface SqlRewriter {
+public interface SqlInterceptor {
 
   int MAX = Integer.MAX_VALUE;
 

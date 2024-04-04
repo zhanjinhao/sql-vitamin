@@ -1,7 +1,8 @@
 package cn.addenda.sql.vitamins.rewriter.sqlcheck;
 
-import cn.addenda.sql.vitamins.rewriter.AbstractSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 只要配置了拦截器就会执行SQL拦截
@@ -13,21 +14,24 @@ import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
  * @author addenda
  * @since 2023/5/7 15:53
  */
-public class SqlCheckSqlRewriter extends AbstractSqlRewriter {
+@Slf4j
+public class SqlCheckSqlInterceptor extends AbstractSqlInterceptor {
 
   private final SqlChecker sqlChecker;
+  private final boolean defaultDisable;
   private final boolean defaultCheckAllColumn;
   private final boolean defaultCheckExactIdentifier;
   private final boolean defaultCheckDmlCondition;
 
-  public SqlCheckSqlRewriter(
-      boolean removeEnter, SqlChecker sqlChecker, boolean checkAllColumn,
-      boolean checkExactIdentifier, boolean checkDmlCondition) {
+  public SqlCheckSqlInterceptor(
+      boolean removeEnter, SqlChecker sqlChecker, boolean disable,
+      boolean checkAllColumn, boolean checkExactIdentifier, boolean checkDmlCondition) {
     super(removeEnter);
     if (sqlChecker == null) {
       throw new SqlCheckException("`sqlChecker` can not be null!");
     }
     this.sqlChecker = sqlChecker;
+    this.defaultDisable = disable;
     this.defaultCheckAllColumn = checkAllColumn;
     this.defaultCheckExactIdentifier = checkExactIdentifier;
     this.defaultCheckDmlCondition = checkDmlCondition;
@@ -35,10 +39,31 @@ public class SqlCheckSqlRewriter extends AbstractSqlRewriter {
 
   @Override
   public String rewrite(String sql) {
-    if (!SqlCheckContext.contextActive()) {
+    Boolean disable = JdbcSQLUtils.getOrDefault(SqlCheckContext.getDisable(), defaultDisable);
+    if (Boolean.TRUE.equals(disable)) {
       return sql;
     }
 
+    log.debug("Sql check - start: {}.", sql);
+
+    if (!SqlCheckContext.contextActive()) {
+      try {
+        SqlCheckContext.push(new SqlCheckConfig());
+        sql = doRewrite(sql);
+      } finally {
+        SqlCheckContext.remove();
+      }
+      return sql;
+    } else {
+      sql = doRewrite(sql);
+    }
+
+    log.debug("Sql check - end: {}.", sql);
+
+    return sql;
+  }
+
+    private String doRewrite(String sql) {
     Boolean checkAllColumn =
         JdbcSQLUtils.getOrDefault(SqlCheckContext.getCheckAllColumn(), defaultCheckAllColumn);
     if (Boolean.TRUE.equals(checkAllColumn)
@@ -63,7 +88,6 @@ public class SqlCheckSqlRewriter extends AbstractSqlRewriter {
       String msg = String.format("SQL: [%s], 没有条件！", removeEnter(sql));
       throw new SqlCheckException(msg);
     }
-
     return sql;
   }
 

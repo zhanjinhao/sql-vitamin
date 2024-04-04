@@ -1,7 +1,7 @@
 package cn.addenda.sql.vitamins.client.spring.aop.lockingread;
 
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
-import cn.addenda.sql.vitamins.rewriter.lockingread.LockingReadSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.lockingread.LockingReadSqlInterceptor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,11 +41,11 @@ public class LockingReadProxyConfiguration implements ImportAware {
   }
 
   public class LockingReadPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<LockingReadSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<LockingReadSqlInterceptor> {
 
     @Override
-    protected LockingReadSqlRewriter getSqlRewriter() {
-      return new LockingReadSqlRewriter(removeEnter);
+    protected LockingReadSqlInterceptor getSqlInterceptor() {
+      return new LockingReadSqlInterceptor(removeEnter);
     }
 
     @Override

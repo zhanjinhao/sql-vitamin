@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.tombstone;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneException;
-import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneRewriter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +83,11 @@ public class TombstoneProxyConfiguration implements ImportAware {
   }
 
   public class TombstoneBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<TombstoneSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<TombstoneSqlInterceptor> {
 
     @Override
-    protected TombstoneSqlRewriter getSqlRewriter() {
-      return new TombstoneSqlRewriter(removeEnter, tombstoneRewriter, disable, joinUseSubQuery);
+    protected TombstoneSqlInterceptor getSqlInterceptor() {
+      return new TombstoneSqlInterceptor(removeEnter, tombstoneRewriter, disable, joinUseSubQuery);
     }
 
     @Override

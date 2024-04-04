@@ -1,21 +1,22 @@
 package cn.addenda.sql.vitamins.rewriter.lockingread;
 
-import cn.addenda.sql.vitamins.rewriter.AbstractSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * todo 改造成SQL suffix
  * 配置了拦截器 且 LockingReadContext配置了锁 才会执行。
  *
  * @author addenda
  * @since 2023/4/27 20:19
  */
 @Slf4j
-public class LockingReadSqlRewriter extends AbstractSqlRewriter {
+public class LockingReadSqlInterceptor extends AbstractSqlInterceptor {
 
-  public LockingReadSqlRewriter() {
+  public LockingReadSqlInterceptor() {
   }
 
-  public LockingReadSqlRewriter(boolean removeEnter) {
+  public LockingReadSqlInterceptor(boolean removeEnter) {
     super(removeEnter);
   }
 
@@ -29,7 +30,7 @@ public class LockingReadSqlRewriter extends AbstractSqlRewriter {
       return sql;
     }
 
-    log.debug("Locking Reads, before sql rewriting: [{}].", removeEnter(sql));
+    log.debug("Locking Reads, before sql: [{}].", removeEnter(sql));
     // todo 移除sql末位的;
     if (LockingReadContext.R_LOCK.equals(lock)) {
       sql = sql + " lock in share mode";
@@ -40,7 +41,7 @@ public class LockingReadSqlRewriter extends AbstractSqlRewriter {
       throw new LockingReadException(msg);
     }
 
-    log.debug("Locking Reads, after sql rewriting: [{}].", removeEnter(sql));
+    log.debug("Locking Reads, after sql: [{}].", removeEnter(sql));
     return sql;
   }
 

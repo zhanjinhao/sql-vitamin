@@ -12,28 +12,28 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
 @Slf4j
-public class SqlRewritableDataSource extends WrapperAdapter implements DataSource {
+public class SqlInterceptedDataSource extends WrapperAdapter implements DataSource {
 
   private final DataSource delegate;
 
   @Getter
-  private final SqlRewriter sqlRewriter;
+  private final SqlInterceptor sqlInterceptor;
 
-  public SqlRewritableDataSource(DataSource delegate, SqlRewriter sqlRewriter) {
+  public SqlInterceptedDataSource(DataSource delegate, SqlInterceptor sqlInterceptor) {
     this.delegate = delegate;
-    this.sqlRewriter = sqlRewriter;
+    this.sqlInterceptor = sqlInterceptor;
   }
 
   @Override
   public Connection getConnection() throws SQLException {
     Connection connection = delegate.getConnection();
-    return new SqlRewritableConnection(this, connection, sqlRewriter);
+    return new SqlInterceptedConnection(this, connection, sqlInterceptor);
   }
 
   @Override
   public Connection getConnection(String username, String password) throws SQLException {
     Connection connection = delegate.getConnection(username, password);
-    return new SqlRewritableConnection(this, connection, sqlRewriter);
+    return new SqlInterceptedConnection(this, connection, sqlInterceptor);
   }
 
   protected PrintWriter logWriter = new PrintWriter(System.out);

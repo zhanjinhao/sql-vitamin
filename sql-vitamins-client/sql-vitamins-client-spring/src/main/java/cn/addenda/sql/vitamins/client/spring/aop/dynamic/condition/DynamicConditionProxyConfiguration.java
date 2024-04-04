@@ -2,7 +2,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.dynamic.condition;
 
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
-import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DynamicConditionSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DynamicConditionSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DynamicConditionRewriter;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
 import lombok.extern.slf4j.Slf4j;
@@ -80,11 +80,11 @@ public class DynamicConditionProxyConfiguration implements ImportAware {
   }
 
   public class DynamicConditionBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<DynamicConditionSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<DynamicConditionSqlInterceptor> {
 
     @Override
-    protected DynamicConditionSqlRewriter getSqlRewriter() {
-      return new DynamicConditionSqlRewriter(removeEnter, dynamicConditionRewriter);
+    protected DynamicConditionSqlInterceptor getSqlInterceptor() {
+      return new DynamicConditionSqlInterceptor(removeEnter, dynamicConditionRewriter);
     }
 
     @Override

@@ -50,6 +50,18 @@ public class SqlCheckContext {
     return sqlCheckConfig.getCheckDmlCondition();
   }
 
+  public static void setDisable(Boolean aBoolean) {
+    Deque<SqlCheckConfig> sqlCheckConfigDeque = SQL_CHECK_TL.get();
+    SqlCheckConfig sqlCheckConfig = sqlCheckConfigDeque.peek();
+    sqlCheckConfig.setDisable(aBoolean);
+  }
+
+  public static Boolean getDisable() {
+    Deque<SqlCheckConfig> sqlCheckConfigDeque = SQL_CHECK_TL.get();
+    SqlCheckConfig sqlCheckConfig = sqlCheckConfigDeque.peek();
+    return sqlCheckConfig.getDisable();
+  }
+
   public static void push(SqlCheckConfig sqlCheckConfig) {
     Deque<SqlCheckConfig> sqlCheckConfigDeque = SQL_CHECK_TL.get();
     if (sqlCheckConfigDeque == null) {

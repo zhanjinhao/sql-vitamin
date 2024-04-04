@@ -4,7 +4,7 @@ import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProc
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
 import cn.addenda.sql.vitamins.rewriter.dynamic.tablename.DynamicTableNameRewriter;
-import cn.addenda.sql.vitamins.rewriter.dynamic.tablename.DynamicTableNameSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.dynamic.tablename.DynamicTableNameSqlInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,11 +80,11 @@ public class DynamicTableNameProxyConfiguration implements ImportAware {
   }
 
   public class DynamicTableNameBeanPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<DynamicTableNameSqlRewriter> {
+      extends AbstractSqlVitaminsBeanPostProcessor<DynamicTableNameSqlInterceptor> {
 
     @Override
-    protected DynamicTableNameSqlRewriter getSqlRewriter() {
-      return new DynamicTableNameSqlRewriter(removeEnter, dynamicTableNameRewriter);
+    protected DynamicTableNameSqlInterceptor getSqlInterceptor() {
+      return new DynamicTableNameSqlInterceptor(removeEnter, dynamicTableNameRewriter);
     }
 
     @Override

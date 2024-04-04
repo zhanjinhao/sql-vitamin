@@ -8,18 +8,20 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SqlCheckConfig {
+  private Boolean disable;
   private Boolean checkAllColumn;
   private Boolean checkExactIdentifier;
   private Boolean checkDmlCondition;
 
   public SqlCheckConfig(SqlCheckConfig sqlCheckConfig) {
+    this.disable = sqlCheckConfig.disable;
     this.checkAllColumn = sqlCheckConfig.checkAllColumn;
     this.checkExactIdentifier = sqlCheckConfig.checkExactIdentifier;
     this.checkDmlCondition = sqlCheckConfig.checkDmlCondition;
   }
 
   public static SqlCheckConfig of(
-      Boolean checkAllColumn, Boolean checkExactIdentifier, Boolean checkDmlCondition) {
-    return new SqlCheckConfig(checkAllColumn, checkExactIdentifier, checkDmlCondition);
+      Boolean disable, Boolean checkAllColumn, Boolean checkExactIdentifier, Boolean checkDmlCondition) {
+    return new SqlCheckConfig(disable, checkAllColumn, checkExactIdentifier, checkDmlCondition);
   }
 }

@@ -16,6 +16,8 @@ public @interface ConfigSqlCheck {
 
   Propagation propagation() default Propagation.NEW;
 
+  BoolConfig disable() default BoolConfig.DEFAULT;
+
   BoolConfig checkAllColumn() default BoolConfig.DEFAULT;
 
   BoolConfig checkExactIdentifier() default BoolConfig.DEFAULT;

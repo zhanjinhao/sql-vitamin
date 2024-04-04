@@ -17,6 +17,11 @@ public class SqlCheckConfigUtils {
 
   public static void configSqlCheck(Propagation propagation, SqlCheckConfig sqlCheckConfig) {
     Propagation.assertNotNull(propagation);
+    Boolean disable = sqlCheckConfig.getDisable();
+    if (disable != null) {
+      Propagation.configWithPropagation(propagation, disable,
+          SqlCheckContext::setDisable, SqlCheckContext::getDisable);
+    }
     Boolean checkAllColumn = sqlCheckConfig.getCheckAllColumn();
     if (checkAllColumn != null) {
       Propagation.configWithPropagation(propagation, checkAllColumn,
@@ -38,6 +43,7 @@ public class SqlCheckConfigUtils {
     Propagation propagation = configSqlCheck.propagation();
     configSqlCheck(propagation,
         SqlCheckConfig.of(
+            BoolConfig.toBoolean(configSqlCheck.disable()),
             BoolConfig.toBoolean(configSqlCheck.checkAllColumn()),
             BoolConfig.toBoolean(configSqlCheck.checkExactIdentifier()),
             BoolConfig.toBoolean(configSqlCheck.checkDmlCondition())

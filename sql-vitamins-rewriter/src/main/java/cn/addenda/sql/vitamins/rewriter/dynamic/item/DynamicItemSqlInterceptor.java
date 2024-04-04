@@ -1,7 +1,8 @@
 package cn.addenda.sql.vitamins.rewriter.dynamic.item;
 
-import cn.addenda.sql.vitamins.rewriter.AbstractSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
+import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneException;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
@@ -18,11 +19,11 @@ import java.util.List;
  * @since 2023/4/30 16:30
  */
 @Slf4j
-public class DynamicItemSqlRewriter extends AbstractSqlRewriter {
+public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
 
   private final DynamicItemRewriter dynamicItemRewriter;
 
-  public DynamicItemSqlRewriter(boolean removeEnter, DynamicItemRewriter dynamicItemRewriter) {
+  public DynamicItemSqlInterceptor(boolean removeEnter, DynamicItemRewriter dynamicItemRewriter) {
     super(removeEnter);
     if (dynamicItemRewriter == null) {
       throw new DynamicSQLException("`dynamicItemRewriter` can not be null!");
@@ -41,7 +42,7 @@ public class DynamicItemSqlRewriter extends AbstractSqlRewriter {
       return sql;
     }
 
-    log.debug("Dynamic Item, before sql rewriting: [{}].", removeEnter(sql));
+    log.debug("Dynamic Item, before sql: [{}].", removeEnter(sql));
     String newSql;
     try {
       newSql = doProcess(removeEnter(sql), dynamicItemConfigList);
@@ -50,7 +51,7 @@ public class DynamicItemSqlRewriter extends AbstractSqlRewriter {
       throw new DynamicSQLException(msg, ExceptionUtil.unwrapThrowable(throwable));
     }
 
-    log.debug("Dynamic Item, after sql rewriting: [{}].", newSql);
+    log.debug("Dynamic Item, after sql: [{}].", newSql);
     return newSql;
   }
 
@@ -69,18 +70,25 @@ public class DynamicItemSqlRewriter extends AbstractSqlRewriter {
       Boolean duplicateKeyUpdate = dynamicItemConfig.getDuplicateKeyUpdate();
       UpdateItemMode updateItemMode = dynamicItemConfig.getUpdateItemMode();
 
-      if (DynamicItemOperation.INSERT_ADD_ITEM == dynamicItemOperation) {
-        if (JdbcSQLUtils.isInsert(newSql)) {
-          newSql = dynamicItemRewriter.insertAddItem(newSql, tableName,
-              new Item(itemName, itemValue), insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+      try {
+        if (DynamicItemOperation.INSERT_ADD_ITEM == dynamicItemOperation) {
+          if (JdbcSQLUtils.isInsert(newSql)) {
+            newSql = dynamicItemRewriter.insertAddItem(newSql, tableName,
+                new Item(itemName, itemValue), insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+          }
+        } else if (DynamicItemOperation.UPDATE_ADD_ITEM == dynamicItemOperation) {
+          if (JdbcSQLUtils.isUpdate(newSql)) {
+            newSql = dynamicItemRewriter.updateAddItem(newSql, tableName, new Item(itemName, itemValue), updateItemMode);
+          }
+        } else {
+          String msg = String.format("不支持的操作类型：[%s]，SQL：[%s]。", dynamicItemOperation, removeEnter(sql));
+          throw new DynamicSQLException(msg);
         }
-      } else if (DynamicItemOperation.UPDATE_ADD_ITEM == dynamicItemOperation) {
-        if (JdbcSQLUtils.isUpdate(newSql)) {
-          newSql = dynamicItemRewriter.updateAddItem(newSql, tableName, new Item(itemName, itemValue), updateItemMode);
-        }
-      } else {
-        String msg = String.format("不支持的操作类型：[%s]，SQL：[%s]。", dynamicItemOperation, removeEnter(sql));
-        throw new UnsupportedOperationException(msg);
+      } catch (DynamicSQLException dynamicSQLException) {
+        throw dynamicSQLException;
+      } catch (Throwable throwable) {
+        String msg = String.format("增加动态属性时出错，SQL：[%s]。", removeEnter(sql));
+        throw new TombstoneException(msg, ExceptionUtil.unwrapThrowable(throwable));
       }
     }
 
@@ -89,7 +97,7 @@ public class DynamicItemSqlRewriter extends AbstractSqlRewriter {
 
   @Override
   public int order() {
-    return MAX / 2 - 60000;
+    return MAX / 2 - 61000;
   }
 
 }

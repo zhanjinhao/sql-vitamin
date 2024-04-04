@@ -6,15 +6,15 @@ import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
  * @author addenda
  * @since 2024/3/31 16:06
  */
-public abstract class AbstractSqlRewriter implements SqlRewriter {
+public abstract class AbstractSqlInterceptor implements SqlInterceptor {
 
   private final boolean removeEnter;
 
-  protected AbstractSqlRewriter() {
+  protected AbstractSqlInterceptor() {
     this.removeEnter = true;
   }
 
-  protected AbstractSqlRewriter(boolean removeEnter) {
+  protected AbstractSqlInterceptor(boolean removeEnter) {
     this.removeEnter = removeEnter;
   }
 
