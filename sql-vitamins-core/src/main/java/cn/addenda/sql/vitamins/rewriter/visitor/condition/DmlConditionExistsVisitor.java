@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.condition;
 
-import cn.addenda.sql.vitamins.rewriter.visitor.SQLBoundVisitor;
+import cn.addenda.sql.vitamins.rewriter.visitor.SqlBoundVisitor;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlDeleteStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateStatement;
@@ -10,7 +10,7 @@ import lombok.Getter;
  * @author addenda
  * @since 2023/5/22 21:39
  */
-public class DmlConditionExistsVisitor extends SQLBoundVisitor<SQLStatement> {
+public class DmlConditionExistsVisitor extends SqlBoundVisitor<SQLStatement> {
 
   @Getter
   private boolean exists = false;

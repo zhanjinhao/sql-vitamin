@@ -1,0 +1,42 @@
+update foc_planning.`t_dynamic_name_test_20240306` set `foc_planning`.`t_dynamic_name_test_20240306`.`content` = concat(`foc_planning`.`t_dynamic_name_test_20240306`.`content`, '1');update foc_planning.`t_dynamic_name_test_202403061` set `foc_planning`.`t_dynamic_name_test_202403061`.`content` = concat(`foc_planning`.`t_dynamic_name_test_202403061`.`content`, '1')
+update t_dynamic_name_test_20240306 set foc_planning.t_dynamic_name_test_20240306.content = concat(t_dynamic_name_test_20240306.content, '1');update t_dynamic_name_test_202403061 set foc_planning.t_dynamic_name_test_202403061.content = concat(t_dynamic_name_test_202403061.content, '1')
+update foc_planning.t_dynamic_name_test_20240306 set t_dynamic_name_test_20240306.content = concat(foc_planning.t_dynamic_name_test_20240306.content, '1');update foc_planning.t_dynamic_name_test_202403061 set t_dynamic_name_test_202403061.content = concat(foc_planning.t_dynamic_name_test_202403061.content, '1')
+update db.table set table.name = 'a' where table.age = 10;update db.table1 set table1.name = 'a' where table1.age = 10
+update foc_planning.t_dynamic_name_test_20240306 set foc_planning.t_dynamic_name_test_20240306.content = concat(foc_planning.t_dynamic_name_test_20240306.content, '1');update foc_planning.t_dynamic_name_test_202403061 set foc_planning.t_dynamic_name_test_202403061.content = concat(foc_planning.t_dynamic_name_test_202403061.content, '1')
+UPDATE  `table1` AS `dest`, (SELECT * FROM `table2`  WHERE `id` = x) AS `src` SET `dest`.`col1` = `src`.`col1` WHERE `dest`.`id` = x;UPDATE  `table11` `dest`,  (  SELECT  *   FROM  `table21`  WHERE `id` = x  ) `src` SET `dest`.`col1` = `src`.`col1` WHERE `dest`.`id` = x
+insert into score(name) select a from A union select b from (select b from B) B2 union select c from C;insert into score1(name) select a from A1 union select b from (select b from B1) B2 union select c from C1
+insert into score(name) select a from A union select b from B union select c from C;insert into score1(name) select a from A1 union select b from B1 union select c from C1
+insert into auto_filled_test(name) values ('1\\2');insert into auto_filled_test1(name) values ('1\\2')
+insert into auto_filled_test(name) values ('1\'2');insert into auto_filled_test1(name) values ('1''2')
+insert into t_rule set sqc = ?, rule_code = ?, rule_name = ?, table_name = ?, `condition` = ?, status = ?;insert into t_rule1(sqc,rule_code,rule_name,table_name,`condition`,status)values(?,?,?,?,?,?)
+insert  into table_listnames ( name, address, tele )  select *  from  (  select 'rupert', 'somewhere', '022' from c   )  tmp  where  not exists  (  select name  from table_listnames   where name  = 'rupert'  )  limit 1;insert into table_listnames1 ( name, address, tele )  select *  from  (  select 'rupert', 'somewhere', '022' from c1   )  tmp  where  not exists  (  select name  from table_listnames1   where name  = 'rupert'  )  limit 1
+insert into t_cdc_test(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d) values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?);insert into t_cdc_test1(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d) values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?)
+insert into score ( SNO, CNO, DEGREE ) values ( 109, '\3-105', 76);insert into score1 ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76)
+insert into score ( SNO, CNO, DEGREE ) values ( 109, '\\3-105', 76);insert into score1 ( SNO, CNO, DEGREE ) values ( 109, '\\3-105', 76)
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76);insert  into score1 ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76)
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', DEGREE  + 76  )  on duplicate key update SNO=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1;insert  into score1 ( SNO, CNO, DEGREE ) values ( 109, '3-105', DEGREE  + 76  )  on duplicate key update SNO=131, CNO='4-111', DEGREE=DEGREE_MAX  + 1
+insert  into score ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 );insert  into score1 ( SNO, CNO, DEGREE ) values ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 ) ,  ( 109, '3-105', 76 )
+insert  into score ( SNO, CNO, DEGREE ) values ( ?, '3-105', ? ) ,  ( 109, ?, 76 ) ,  ( ?, '3-105', ? );insert  into score1 ( SNO, CNO, DEGREE ) values ( ?, '3-105', ? ) ,  ( 109, ?, 76 ) ,  ( ?, '3-105', ? )
+insert  into score set SNO=109, CNO='3-105', DEGREE=76;insert into score1(SNO,CNO,DEGREE)values(109,'3-105',76)
+insert  into score set SNO=109, CNO=date_format( now(), 'yyyy-dd-mm' ) , DEGREE=DEGREE  + 9  * 3;insert into score1(SNO,CNO,DEGREE)values(109,date_format(now(),'yyyy-dd-mm'),DEGREE+9*3)
+insert ignore into score set SNO=109, CNO='3-105', DEGREE=76;insert ignore into score1(SNO,CNO,DEGREE)values(109,'3-105',76)
+insert ignore into score set SNO=?, CNO='3-105', DEGREE=?;insert ignore into score1(SNO,CNO,DEGREE)values(?,'3-105',?)
+insert ignore into score set SNO='1387398', CNO=#{cno}, DEGREE=?;insert ignore into score1(SNO,CNO,DEGREE)values('1387398',#{cno},?)
+update A set a = 1 where id in (1, 2, 3);update A1 set a = 1 where id in (1, 2, 3)
+update A c set a = 1 where id in (1, 2, 3);update A1 c set a = 1 where id in (1, 2, 3)
+UPDATE table1 alias SET (column_name,column_name ) = ( SELECT (column_name, column_name) FROM table2 WHERE column_name = alias.column_name) WHERE column_name = VALUE;UPDATE table11 alias SET (column_name,column_name ) = ( SELECT (column_name, column_name) FROM table21 WHERE column_name = alias.column_name) WHERE column_name = VALUE
+update runoob_tbl set runoob_title= replace( runoob_title , 'c++', 'python' ) where id in (select outer_id from A);update runoob_tbl1 set runoob_title= replace( runoob_title , 'c++', 'python' ) where id in (select outer_id from A1)
+update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=?  + 1 , b=?;update runoob_tbl1 set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=?  + 1 , b=?
+update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' )  where runoob_id  = 3;update runoob_tbl1 set runoob_title=replace( runoob_title , 'c++', 'python' )  where runoob_id  = 3
+update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' );update runoob_tbl1 set runoob_title=replace( runoob_title , 'c++', 'python' )
+update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=a  + 1 , b=c;update runoob_tbl1 set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=a  + 1 , b=c
+update t_course t, t_tx_test t2, ttt t3 set t.course_name = '1' and t2.name = '2' where t.course_name = '2';update t_course1 t, t_tx_test1 t2, ttt1 t3 set t.course_name = '1' and t2.name = '2' where t.course_name = '2'
+update t_course t join t_tx_test t2 join ttt t3 set t.course_name = '1' and t2.name = '2' where t.course_name = '2';update t_course1 t join t_tx_test1 t2 join ttt1 t3 set t.course_name = '1' and t2.name = '2' where t.course_name = '2'
+delete from score where id in (select outer_id from t1);delete from score1 where id in (select outer_id from t11)
+delete from A where id in (1, 2, 3);delete from A1 where id in (1, 2, 3)
+delete from score where CREATE_TM  < date_add( now(),  interval 1 day )   and DEGREE  + 1  < 60 - 1;delete from score1 where CREATE_TM  < date_add( now(),  interval 1 day )   and DEGREE  + 1  < 60 - 1
+delete from score where DEGREE  < 50;delete from score1 where DEGREE  < 50
+delete from score where CREATE_TM  < now();delete from score1 where CREATE_TM  < now()
+delete from score where CREATE_TM  < now(3);delete from score1 where CREATE_TM  < now(3)
+delete from score where DEGREE  + 1  < 60 - 1;delete from score1 where DEGREE  + 1  < 60 - 1
+delete from score;delete from score1

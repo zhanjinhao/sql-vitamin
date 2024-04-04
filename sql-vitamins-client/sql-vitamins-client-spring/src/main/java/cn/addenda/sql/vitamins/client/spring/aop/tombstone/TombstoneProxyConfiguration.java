@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.tombstone;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneException;
-import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneInterceptor;
+import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneSqlRewriter;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneRewriter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +26,21 @@ import java.util.stream.Collectors;
 @Configuration
 public class TombstoneProxyConfiguration implements ImportAware {
 
-  protected AnnotationAttributes annotationAttributes;
+  private AnnotationAttributes annotationAttributes;
   private Map<String, TombstoneRewriterConfigurer> tombstoneRewriterConfigurerMap;
   private int order;
   private boolean removeEnter;
   private TombstoneRewriter tombstoneRewriter;
+  private boolean disable;
   private boolean joinUseSubQuery;
 
   @Override
   public void setImportMetadata(AnnotationMetadata importMetadata) {
     this.annotationAttributes = AnnotationAttributes.fromMap(
-      importMetadata.getAnnotationAttributes(EnableTombstone.class.getName(), false));
+        importMetadata.getAnnotationAttributes(EnableTombstone.class.getName(), false));
     if (this.annotationAttributes == null) {
       throw new IllegalArgumentException(
-        EnableTombstone.class.getName() + " is not present on importing class " + importMetadata.getClassName());
+          EnableTombstone.class.getName() + " is not present on importing class " + importMetadata.getClassName());
     }
   }
 
@@ -50,6 +51,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
+    this.disable = annotationAttributes.getBoolean("disable");
     this.joinUseSubQuery = annotationAttributes.getBoolean("joinUseSubQuery");
     return new TombstoneBeanPostProcessor();
   }
@@ -58,7 +60,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
     String tombstoneSqlRewriterName = annotationAttributes.getString("tombstoneSqlRewriter");
     TombstoneRewriterConfigurer tombstoneRewriterConfigurer;
     if (tombstoneRewriterConfigurerMap != null &&
-      (tombstoneRewriterConfigurer = tombstoneRewriterConfigurerMap.get(tombstoneSqlRewriterName)) != null) {
+        (tombstoneRewriterConfigurer = tombstoneRewriterConfigurerMap.get(tombstoneSqlRewriterName)) != null) {
       tombstoneRewriter = tombstoneRewriterConfigurer.getTombstoneRewriter();
     } else {
       try {
@@ -75,15 +77,17 @@ public class TombstoneProxyConfiguration implements ImportAware {
   }
 
   @Autowired(required = false)
-  void setConfigurers(List<TombstoneRewriterConfigurer> configurers) {
-    tombstoneRewriterConfigurerMap = configurers.stream().collect(Collectors.toMap(NamedConfigurer::getName, a -> a));
+  public void setConfigurers(List<TombstoneRewriterConfigurer> configurers) {
+    tombstoneRewriterConfigurerMap = configurers.stream()
+        .collect(Collectors.toMap(NamedConfigurer::getName, a -> a));
   }
 
-  private class TombstoneBeanPostProcessor extends AbstractSqlVitaminsBeanPostProcessor<TombstoneInterceptor> {
+  public class TombstoneBeanPostProcessor
+      extends AbstractSqlVitaminsBeanPostProcessor<TombstoneSqlRewriter> {
 
     @Override
-    protected TombstoneInterceptor getInterceptor() {
-      return new TombstoneInterceptor(removeEnter, tombstoneRewriter, joinUseSubQuery);
+    protected TombstoneSqlRewriter getSqlRewriter() {
+      return new TombstoneSqlRewriter(removeEnter, tombstoneRewriter, disable, joinUseSubQuery);
     }
 
     @Override

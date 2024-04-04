@@ -1,7 +1,8 @@
 package cn.addenda.sql.vitamins.client.common.annotation;
 
-import cn.addenda.sql.vitamins.rewriter.dynamicsql.DynamicItemOperation;
-import cn.addenda.sql.vitamins.rewriter.dynamicsql.DynamicSQLContext;
+import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemOperation;
+import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
+import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 
 import java.lang.annotation.*;
 
@@ -14,13 +15,20 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface DynamicItem {
 
-  DynamicItemOperation operation();
+  DynamicItemOperation dynamicItemOperation();
 
-  String name() default DynamicSQLContext.ALL_TABLE;
+  String tableName();
 
   String itemName();
 
   String itemValue();
 
-  Class<?> clazz();
+  Class<?> itemValueClass();
+
+  InsertAddSelectItemMode insertAddSelectItemMode();
+
+  boolean duplicateKeyUpdate();
+
+  UpdateItemMode updateItemMode();
+
 }

@@ -24,8 +24,8 @@ public abstract class AbstractSqlVitaminsAopModeImportSelector<A extends Annotat
     AnnotationAttributes attributes = AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(annType.getName(), false));
     if (attributes == null) {
       throw new IllegalArgumentException(String.format(
-        "@%s is not present on importing class '%s' as expected",
-        annType.getSimpleName(), importingClassMetadata.getClassName()));
+          "@%s is not present on importing class '%s' as expected",
+          annType.getSimpleName(), importingClassMetadata.getClassName()));
     }
 
     SqlVitaminsAopMode sqlVitaminsAopMode = attributes.getEnum(getSqlVitaminsAopModeAttributeName());

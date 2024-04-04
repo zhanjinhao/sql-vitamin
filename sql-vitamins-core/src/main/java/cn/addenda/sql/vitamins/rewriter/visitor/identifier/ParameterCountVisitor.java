@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.identifier;
 
-import cn.addenda.sql.vitamins.rewriter.visitor.SQLBoundVisitor;
+import cn.addenda.sql.vitamins.rewriter.visitor.SqlBoundVisitor;
 import cn.addenda.sql.vitamins.rewriter.visitor.ViewToTableVisitor;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
@@ -10,7 +10,7 @@ import lombok.Getter;
  * @author addenda
  * @since 2023/6/15 20:59
  */
-public class ParameterCountVisitor extends SQLBoundVisitor<SQLStatement> {
+public class ParameterCountVisitor extends SqlBoundVisitor<SQLStatement> {
 
   @Getter
   private int parameterCount = 0;

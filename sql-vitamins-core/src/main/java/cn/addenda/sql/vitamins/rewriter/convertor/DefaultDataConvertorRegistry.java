@@ -19,6 +19,10 @@ public class DefaultDataConvertorRegistry extends AbstractDataConvertorRegistry 
     super();
   }
 
+  public static DefaultDataConvertorRegistry getInstance() {
+    return new DefaultDataConvertorRegistry();
+  }
+
   public void init() {
     addDataConvertor(new SQLBigIntExprDataConvertor());
     addDataConvertor(new SQLBooleanExprDataConvertor());

@@ -1,7 +1,6 @@
 package cn.addenda.sql.vitamins.client.common.annotation;
 
-import cn.addenda.sql.vitamins.rewriter.dynamicsql.DynamicConditionOperation;
-import cn.addenda.sql.vitamins.rewriter.dynamicsql.DynamicSQLContext;
+import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DynamicConditionOperation;
 
 import java.lang.annotation.*;
 
@@ -14,10 +13,12 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 public @interface DynamicCondition {
 
-  DynamicConditionOperation operation();
+  DynamicConditionOperation dynamicConditionOperation();
 
-  String name() default DynamicSQLContext.ALL_TABLE;
+  String tableOrViewName();
 
   String condition();
+
+  boolean joinUseSubQuery();
 
 }

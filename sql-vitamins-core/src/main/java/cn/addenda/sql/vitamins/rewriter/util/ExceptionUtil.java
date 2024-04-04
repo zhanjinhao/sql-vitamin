@@ -31,17 +31,17 @@ public class ExceptionUtil {
     }
   }
 
-  public static void reportAsRuntimeException(Throwable throwable, Class<? extends RuntimeException> exception) {
+  public static RuntimeException reportAsRuntimeException(Throwable throwable, Class<? extends RuntimeException> exception) {
     throwable = ExceptionUtil.unwrapThrowable(throwable);
     if (throwable != null && !(exception.isAssignableFrom(throwable.getClass()))) {
       if (throwable instanceof RuntimeException) {
-        throw (RuntimeException) throwable;
+        return (RuntimeException) throwable;
       } else {
-        throw new UndeclaredThrowableException(throwable);
+        return new UndeclaredThrowableException(throwable);
       }
     }
 
-    throw exception.cast(throwable);
+    return exception.cast(throwable);
   }
 
 }

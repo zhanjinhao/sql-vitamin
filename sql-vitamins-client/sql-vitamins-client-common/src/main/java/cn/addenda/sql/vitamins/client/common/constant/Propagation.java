@@ -23,7 +23,7 @@ public enum Propagation {
   MERGE_OLD;
 
   public static <T> void configWithPropagation(
-    Propagation propagation, T obj, Consumer<T> consumer, Supplier<T> supplier) {
+      Propagation propagation, T obj, Consumer<T> consumer, Supplier<T> supplier) {
     if (propagation == Propagation.NEW || propagation == Propagation.MERGE_NEW) {
       consumer.accept(obj);
     } else {
@@ -31,6 +31,12 @@ public enum Propagation {
       if (t == null) {
         consumer.accept(obj);
       }
+    }
+  }
+
+  public static void assertNotNull(Propagation propagation) {
+    if (propagation == null) {
+      throw new IllegalArgumentException("`propagation` must not be null!");
     }
   }
 

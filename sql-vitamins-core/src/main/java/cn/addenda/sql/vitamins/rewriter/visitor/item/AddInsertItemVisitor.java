@@ -214,7 +214,7 @@ public class AddInsertItemVisitor extends AbstractAddItemVisitor<MySqlInsertStat
     return "InsertAddItemVisitor{" +
         "item=" + item +
         ", reportItemNameExists=" + reportItemNameExists +
-        ", insertSelectAddItemMode=" + insertAddSelectItemMode +
+        ", insertAddSelectItemMode=" + insertAddSelectItemMode +
         ", duplicateKeyUpdate=" + duplicateKeyUpdate +
         ", updateItemMode=" + updateItemMode +
         "} " + super.toString();

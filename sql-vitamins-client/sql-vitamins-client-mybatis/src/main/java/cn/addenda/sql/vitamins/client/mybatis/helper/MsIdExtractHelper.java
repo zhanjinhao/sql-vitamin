@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.client.mybatis.helper;
 
 import cn.addenda.sql.vitamins.client.common.annotation.*;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigBaseEntity;
 
 /**
  * @author addenda
@@ -8,36 +9,18 @@ import cn.addenda.sql.vitamins.client.common.annotation.*;
  */
 public interface MsIdExtractHelper {
 
-  ConfigPropagation extractConfigPropagation(String msId);
+  ConfigBaseEntity extractConfigBaseEntity(String msId);
 
-  DisableBaseEntity extractDisableBaseEntity(String msId);
+  ConfigLockingRead extractConfigLock(String msId);
 
-  ConfigMasterView extractConfigMasterView(String msId);
+  ConfigTombstone extractConfigTombstone(String msId);
 
-  ConfigDuplicateKeyUpdate extractConfigDuplicateKeyUpdate(String msId);
+  ConfigSqlCheck extractConfigSqlCheck(String msId);
 
-  ConfigUpdateItemMode extractConfigUpdateItemMode(String msId);
+  ConfigDynamicCondition extractConfigDynamicCondition(String msId);
 
-  ConfigReportItemNameExists extractConfigReportItemNameExists(String msId);
+  ConfigDynamicItem extractConfigDynamicItem(String msId);
 
-  ConfigInsertSelectAddItemMode extractConfigInsertSelectAddItemMode(String msId);
-
-  DynamicConditions extractDynamicConditions(String msId);
-
-  DynamicItems extractDynamicItems(String msId);
-
-  ConfigDupThenNew extractConfigDupThenNew(String msId);
-
-  ConfigJoinUseSubQuery extractConfigJoinUseSubQuery(String msId);
-
-  ConfigLock extractConfigLock(String msId);
-
-  UnCheckAllColumn extractUnCheckAllColumn(String msId);
-
-  UnCheckDmlCondition extractUnCheckDmlCondition(String msId);
-
-  UnCheckExactIdentifier extractUnCheckExactIdentifier(String msId);
-
-  DisableTombstone extractDisableTombstone(String msId);
+  ConfigDynamicTableName extractConfigDynamicTableName(String msId);
 
 }

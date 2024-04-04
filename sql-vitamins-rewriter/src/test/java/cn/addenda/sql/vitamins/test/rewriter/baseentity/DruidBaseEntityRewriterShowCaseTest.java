@@ -23,7 +23,7 @@ public class DruidBaseEntityRewriterShowCaseTest {
     String sql = "insert into score ( SNO, CNO, DEGREE ) values ( 109, '\\\\3-105', 76)";
 
     String s = baseEntityRewriter.rewriteInsertSql(sql,
-        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL, false);
+        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL);
 
     //  insert into score (SNO, CNO, DEGREE,
     //       creator, creator_name, create_time, modifier, modifier_name, modify_time, remark)
@@ -39,7 +39,7 @@ public class DruidBaseEntityRewriterShowCaseTest {
     String sql = "insert  into score set SNO=109, CNO='\\\\3-105', DEGREE=76";
 
     String s = baseEntityRewriter.rewriteInsertSql(sql,
-        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL, false);
+        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL);
 
     //  insert into score (SNO, CNO, DEGREE,
     //        creator, creator_name , create_time, modifier, modifier_name, modify_time, remark)
@@ -56,7 +56,7 @@ public class DruidBaseEntityRewriterShowCaseTest {
         + "values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?)";
 
     String s = baseEntityRewriter.rewriteInsertSql(sql,
-        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL, false);
+        InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL);
 
     //  insert into t_cdc_test (long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d,
     //        creator, creator_name, create_time, modifier, modifier_name, modify_time, remark)
@@ -71,7 +71,7 @@ public class DruidBaseEntityRewriterShowCaseTest {
         new DruidBaseEntityRewriter(null, null, new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
     String sql = "update runoob_tbl set runoob_title=replace( runoob_title , 'c++', 'python' ) , a=?  + 1 , b=?";
 
-    String s = baseEntityRewriter.rewriteUpdateSql(sql, UpdateItemMode.NOT_NULL, false);
+    String s = baseEntityRewriter.rewriteUpdateSql(sql, UpdateItemMode.NOT_NULL);
 
     //  update runoob_tbl set runoob_title = replace(runoob_title, 'c++', 'python'), a = ? + 1, b = ?,
     //      modifier = 'addenda', modifier_name = 'addenda', modify_time = now(3)
@@ -84,7 +84,7 @@ public class DruidBaseEntityRewriterShowCaseTest {
         new DruidBaseEntityRewriter(null, null, new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
     String sql = "update runoob_tbl set runoob_title= replace( runoob_title , 'c++', 'python' ) where id in (select outer_id from A)";
 
-    String s = baseEntityRewriter.rewriteUpdateSql(sql, UpdateItemMode.NOT_NULL, false);
+    String s = baseEntityRewriter.rewriteUpdateSql(sql, UpdateItemMode.NOT_NULL);
 
     //  update runoob_tbl set runoob_title = replace(runoob_title, 'c++', 'python'),
     //      modifier = 'addenda', modifier_name = 'addenda', modify_time = now(3) where id in ( select outer_id from A )

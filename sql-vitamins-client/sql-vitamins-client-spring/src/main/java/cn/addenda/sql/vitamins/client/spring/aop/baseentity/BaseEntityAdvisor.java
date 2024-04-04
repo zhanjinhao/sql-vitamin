@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.client.spring.aop.baseentity;
 
-import cn.addenda.sql.vitamins.client.common.annotation.*;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigBaseEntity;
 import cn.addenda.sql.vitamins.client.spring.util.SpringAnnotationUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
@@ -23,13 +23,7 @@ public class BaseEntityAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-      return SpringAnnotationUtils.annotationExists(method, targetClass, ConfigPropagation.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, DisableBaseEntity.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigMasterView.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigReportItemNameExists.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigInsertSelectAddItemMode.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigUpdateItemMode.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigDuplicateKeyUpdate.class);
+      return SpringAnnotationUtils.annotationExists(method, targetClass, ConfigBaseEntity.class);
     }
 
   }

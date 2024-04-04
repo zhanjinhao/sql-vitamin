@@ -23,6 +23,8 @@ public @interface EnableTombstone {
 
   boolean removeEnter() default true;
 
+  boolean disable() default false;
+
   String tombstoneSqlRewriter() default NamedConfigurer.DEFAULT;
 
   boolean joinUseSubQuery() default false;

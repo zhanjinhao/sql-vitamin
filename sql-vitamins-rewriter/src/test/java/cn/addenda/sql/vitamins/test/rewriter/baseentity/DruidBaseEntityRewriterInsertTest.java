@@ -4,6 +4,7 @@ import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityRewriter;
 import cn.addenda.sql.vitamins.rewriter.baseentity.DefaultBaseEntitySource;
 import cn.addenda.sql.vitamins.rewriter.baseentity.DruidBaseEntityRewriter;
 import cn.addenda.sql.vitamins.rewriter.convertor.DefaultDataConvertorRegistry;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
@@ -14,6 +15,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,9 +42,9 @@ public class DruidBaseEntityRewriterInsertTest {
         continue;
       }
       System.out.println(line + " : ------------------------------------------------------------------------------------");
-      BaseEntityRewriter baseEntityRewriter = new DruidBaseEntityRewriter(null, null, new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
+      BaseEntityRewriter baseEntityRewriter = new DruidBaseEntityRewriter(null, ArrayUtils.asArrayList("dual"), new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
       String s = baseEntityRewriter.rewriteInsertSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)),
-          InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL, false);
+          InsertAddSelectItemMode.DB, false, UpdateItemMode.NOT_NULL);
       sqlStatements = SQLUtils.parseStatements(s, DbType.mysql);
       List<SQLStatement> expectSqlStatements = SQLUtils.parseStatements(expect, DbType.mysql);
       Assert.assertEquals(
@@ -65,7 +67,7 @@ public class DruidBaseEntityRewriterInsertTest {
     }
     BaseEntityRewriter baseEntityRewriter = new DruidBaseEntityRewriter(null, null, new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
     String s = baseEntityRewriter.rewriteInsertSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)),
-        InsertAddSelectItemMode.DB, true, UpdateItemMode.NOT_NULL, false);
+        InsertAddSelectItemMode.DB, true, UpdateItemMode.NOT_NULL);
     sqlStatements = SQLUtils.parseStatements(s, DbType.mysql);
     List<SQLStatement> expectSqlStatements = SQLUtils.parseStatements(expect, DbType.mysql);
     Assert.assertEquals(

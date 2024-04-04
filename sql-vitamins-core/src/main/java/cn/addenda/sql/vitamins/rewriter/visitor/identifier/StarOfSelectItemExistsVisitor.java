@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.identifier;
 
-import cn.addenda.sql.vitamins.rewriter.visitor.SQLBoundVisitor;
+import cn.addenda.sql.vitamins.rewriter.visitor.SqlBoundVisitor;
 import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
 import com.alibaba.druid.sql.ast.expr.SQLAllColumnExpr;
 import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
@@ -11,7 +11,7 @@ import lombok.Getter;
  * @author addenda
  * @since 2023/5/6 20:33
  */
-public class StarOfSelectItemExistsVisitor extends SQLBoundVisitor<SQLSelectStatement> {
+public class StarOfSelectItemExistsVisitor extends SqlBoundVisitor<SQLSelectStatement> {
 
   private final boolean visitAggregateFunction;
 

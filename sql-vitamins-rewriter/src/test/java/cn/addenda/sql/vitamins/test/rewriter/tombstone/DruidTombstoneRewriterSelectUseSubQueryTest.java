@@ -1,6 +1,8 @@
 package cn.addenda.sql.vitamins.test.rewriter.tombstone;
 
+import cn.addenda.sql.vitamins.rewriter.convertor.DefaultDataConvertorRegistry;
 import cn.addenda.sql.vitamins.rewriter.tombstone.DruidTombstoneRewriter;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.test.rewriter.SqlReader;
 import com.alibaba.druid.DbType;
@@ -9,6 +11,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,7 +37,7 @@ public class DruidTombstoneRewriterSelectUseSubQueryTest {
         continue;
       }
       System.out.println(line + " : ------------------------------------------------------------------------------------");
-      DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter();
+      DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter(null, ArrayUtils.asArrayList("dual"), new DefaultDataConvertorRegistry());
       String s = druidTombstoneRewriter.rewriteSelectSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)), true);
       sqlStatements = SQLUtils.parseStatements(s, DbType.mysql);
 

@@ -1,6 +1,6 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.identifier;
 
-import cn.addenda.sql.vitamins.rewriter.visitor.SQLBoundVisitor;
+import cn.addenda.sql.vitamins.rewriter.visitor.SqlBoundVisitor;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
@@ -22,7 +22,7 @@ import java.util.List;
  * @author addenda
  * @since 2023/5/7 11:43
  */
-public abstract class AbstractIdentifierVisitor extends SQLBoundVisitor<SQLStatement> {
+public abstract class AbstractIdentifierVisitor extends SqlBoundVisitor<SQLStatement> {
 
   protected final String identifier;
 

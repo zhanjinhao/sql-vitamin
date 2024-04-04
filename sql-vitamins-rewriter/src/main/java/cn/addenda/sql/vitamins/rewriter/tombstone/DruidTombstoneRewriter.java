@@ -8,6 +8,7 @@ import cn.addenda.sql.vitamins.rewriter.visitor.condition.TableAddJoinConditionV
 import cn.addenda.sql.vitamins.rewriter.visitor.identifier.IdentifierExistsVisitor;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.AddInsertItemVisitor;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
+import cn.addenda.sql.vitamins.rewriter.visitor.item.Item;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLName;
@@ -24,10 +25,31 @@ import java.util.function.Consumer;
  * @since 2023/4/30 19:42
  */
 @Slf4j
-public class DruidTombstoneRewriter extends AbstractTombstoneRewriter {
+public class DruidTombstoneRewriter implements TombstoneRewriter {
+
+  private static final String TOMBSTONE_NAME = "if_del";
+  private static final Integer NON_TOMBSTONE_VALUE = 0;
+  private static final Integer TOMBSTONE_VALUE = 1;
+  private static final String NON_TOMBSTONE = TOMBSTONE_NAME + "=" + NON_TOMBSTONE_VALUE;
+  private static final String TOMBSTONE = TOMBSTONE_NAME + "=" + TOMBSTONE_VALUE;
+  private static final Item TOMBSTONE_ITEM = new Item(TOMBSTONE_NAME, NON_TOMBSTONE_VALUE);
+
+  /**
+   * 逻辑删除的表
+   */
+  private final List<String> included;
+
+  /**
+   * 非逻辑删除的表
+   */
+  private final List<String> notIncluded;
+
+  private final DataConvertorRegistry dataConvertorRegistry;
 
   public DruidTombstoneRewriter(List<String> included, List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
-    super(included, notIncluded, dataConvertorRegistry);
+    this.included = included;
+    this.notIncluded = notIncluded;
+    this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
   public DruidTombstoneRewriter() {

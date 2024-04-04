@@ -1,8 +1,6 @@
 package cn.addenda.sql.vitamins.client.spring.aop.tombstone;
 
-import cn.addenda.sql.vitamins.client.common.annotation.ConfigJoinUseSubQuery;
-import cn.addenda.sql.vitamins.client.common.annotation.ConfigPropagation;
-import cn.addenda.sql.vitamins.client.common.annotation.DisableTombstone;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigTombstone;
 import cn.addenda.sql.vitamins.client.spring.util.SpringAnnotationUtils;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
@@ -25,9 +23,7 @@ public class TombstoneAdvisor extends AbstractBeanFactoryPointcutAdvisor {
 
     @Override
     public boolean matches(Method method, Class<?> targetClass) {
-      return SpringAnnotationUtils.annotationExists(method, targetClass, ConfigPropagation.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, DisableTombstone.class)
-        || SpringAnnotationUtils.annotationExists(method, targetClass, ConfigJoinUseSubQuery.class);
+      return SpringAnnotationUtils.annotationExists(method, targetClass, ConfigTombstone.class);
     }
 
   }

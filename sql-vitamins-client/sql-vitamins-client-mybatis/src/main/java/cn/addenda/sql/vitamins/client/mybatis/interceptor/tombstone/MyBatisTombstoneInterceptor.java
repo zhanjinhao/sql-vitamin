@@ -1,10 +1,9 @@
 package cn.addenda.sql.vitamins.client.mybatis.interceptor.tombstone;
 
-import cn.addenda.sql.vitamins.client.common.ConfigContextUtils;
-import cn.addenda.sql.vitamins.client.common.constant.Propagation;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigTombstone;
+import cn.addenda.sql.vitamins.client.common.config.TombstoneConfigUtils;
 import cn.addenda.sql.vitamins.client.mybatis.helper.MsIdExtractHelper;
 import cn.addenda.sql.vitamins.client.mybatis.interceptor.AbstractSqlVitaminsMybatisInterceptor;
-import cn.addenda.sql.vitamins.rewriter.pojo.Binary;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
@@ -21,11 +20,11 @@ import org.apache.ibatis.session.RowBounds;
  * @since 2023/6/10 14:06
  */
 @Intercepts({
-  @Signature(type = Executor.class, method = "query",
-    args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-  @Signature(type = Executor.class, method = "query",
-    args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-  @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+    @Signature(type = Executor.class, method = "query",
+        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+    @Signature(type = Executor.class, method = "query",
+        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
 })
 public class MyBatisTombstoneInterceptor extends AbstractSqlVitaminsMybatisInterceptor {
 
@@ -38,15 +37,15 @@ public class MyBatisTombstoneInterceptor extends AbstractSqlVitaminsMybatisInter
 
   @Override
   public Object intercept(Invocation invocation) throws Throwable {
-    Binary<String, Propagation> binary = extract(invocation);
-    String msId = binary.getF1();
-    Propagation propagation = binary.getF2();
+    // 获取 msId
+    Object[] args = invocation.getArgs();
+    MappedStatement ms = (MappedStatement) args[0];
+    String msId = ms.getId();
 
-    ConfigContextUtils.pushTombstone(propagation);
     try {
-      ConfigContextUtils.configTombstone(propagation,
-        msIdExtractHelper.extractDisableTombstone(msId),
-        msIdExtractHelper.extractConfigJoinUseSubQuery(msId));
+      ConfigTombstone configTombstone = msIdExtractHelper.extractConfigTombstone(msId);
+      TombstoneConfigUtils.pushTombstone(configTombstone.propagation());
+      TombstoneConfigUtils.configTombstone(configTombstone);
       return invocation.proceed();
     } finally {
       TombstoneContext.pop();

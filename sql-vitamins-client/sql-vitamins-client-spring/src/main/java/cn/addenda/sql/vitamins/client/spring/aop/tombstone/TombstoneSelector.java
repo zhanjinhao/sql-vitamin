@@ -15,13 +15,13 @@ public class TombstoneSelector extends AbstractSqlVitaminsAopModeImportSelector<
   public String[] selectImports(SqlVitaminsAopMode sqlVitaminsAopMode) {
     if (sqlVitaminsAopMode == SqlVitaminsAopMode.ONLY_CONFIG) {
       return new String[]{
-        AutoProxyRegistrar.class.getName(),
-        TombstoneConfigConfiguration.class.getName()};
+          AutoProxyRegistrar.class.getName(),
+          TombstoneConfigConfiguration.class.getName()};
     } else if (sqlVitaminsAopMode == SqlVitaminsAopMode.PROXY_CONFIG) {
       return new String[]{
-        AutoProxyRegistrar.class.getName(),
-        TombstoneConfigConfiguration.class.getName(),
-        TombstoneProxyConfiguration.class.getName()};
+          AutoProxyRegistrar.class.getName(),
+          TombstoneConfigConfiguration.class.getName(),
+          TombstoneProxyConfiguration.class.getName()};
     }
     String msg = String.format("SqlVitaminsAopMode 只可选 ONLY_CONFIG 和 PROXY_CONFIG 两种，当前是：[%s]。", sqlVitaminsAopMode);
     throw new TombstoneException(msg);

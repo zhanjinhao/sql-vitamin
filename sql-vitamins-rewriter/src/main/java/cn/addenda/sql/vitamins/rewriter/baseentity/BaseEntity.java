@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
  * @since 2022/8/16 20:40
  */
 @JsonIgnoreProperties({
-  BaseEntity.N_CREATOR, BaseEntity.N_CREATOR_NAME, BaseEntity.N_CREATE_TIME, BaseEntity.N_MODIFIER,
-  BaseEntity.N_MODIFIER_NAME, BaseEntity.N_MODIFY_TIME, BaseEntity.N_REMARK})
+    BaseEntity.N_CREATOR, BaseEntity.N_CREATOR_NAME, BaseEntity.N_CREATE_TIME, BaseEntity.N_MODIFIER,
+    BaseEntity.N_MODIFIER_NAME, BaseEntity.N_MODIFY_TIME, BaseEntity.N_REMARK})
 public abstract class BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public abstract class BaseEntity implements Serializable {
     Field[] declaredFields = baseEntityClass.getDeclaredFields();
     for (Field field : declaredFields) {
       if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())
-        || !field.isAnnotationPresent(UpdateField.class)) {
+          || !field.isAnnotationPresent(UpdateField.class)) {
         continue;
       }
       fieldNameList.add(field.getName());
@@ -163,14 +163,14 @@ public abstract class BaseEntity implements Serializable {
   @Override
   public String toString() {
     return "BaseEntity{" +
-      "creator='" + creator + '\'' +
-      ", creatorName='" + creatorName + '\'' +
-      ", createTime=" + createTime +
-      ", modifier='" + modifier + '\'' +
-      ", modifierName='" + modifierName + '\'' +
-      ", modifyTime=" + modifyTime +
-      ", remark='" + remark + '\'' +
-      '}';
+        "creator='" + creator + '\'' +
+        ", creatorName='" + creatorName + '\'' +
+        ", createTime=" + createTime +
+        ", modifier='" + modifier + '\'' +
+        ", modifierName='" + modifierName + '\'' +
+        ", modifyTime=" + modifyTime +
+        ", remark='" + remark + '\'' +
+        '}';
   }
 
   private static class LocalDateTimeStrDeSerializer extends JsonDeserializer<LocalDateTime> {

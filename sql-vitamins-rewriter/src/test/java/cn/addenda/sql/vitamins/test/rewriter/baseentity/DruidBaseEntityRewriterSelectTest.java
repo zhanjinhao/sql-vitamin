@@ -1,7 +1,10 @@
 package cn.addenda.sql.vitamins.test.rewriter.baseentity;
 
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityRewriter;
+import cn.addenda.sql.vitamins.rewriter.baseentity.DefaultBaseEntitySource;
 import cn.addenda.sql.vitamins.rewriter.baseentity.DruidBaseEntityRewriter;
+import cn.addenda.sql.vitamins.rewriter.convertor.DefaultDataConvertorRegistry;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.test.rewriter.SqlReader;
 import com.alibaba.druid.DbType;
@@ -10,6 +13,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +40,7 @@ public class DruidBaseEntityRewriterSelectTest {
         continue;
       }
       System.out.println(line + " : ------------------------------------------------------------------------------------");
-      BaseEntityRewriter baseEntityRewriter = new DruidBaseEntityRewriter();
+      BaseEntityRewriter baseEntityRewriter = new DruidBaseEntityRewriter(null, ArrayUtils.asArrayList("dual"), new DefaultBaseEntitySource(), new DefaultDataConvertorRegistry());
       String s = baseEntityRewriter.rewriteSelectSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)), null);
       sqlStatements = SQLUtils.parseStatements(s, DbType.mysql);
       List<SQLStatement> expectSqlStatements = SQLUtils.parseStatements(expect, DbType.mysql);

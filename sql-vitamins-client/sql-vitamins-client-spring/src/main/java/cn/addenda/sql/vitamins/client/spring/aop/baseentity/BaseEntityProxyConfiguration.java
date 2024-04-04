@@ -3,7 +3,7 @@ package cn.addenda.sql.vitamins.client.spring.aop.baseentity;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
 import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityException;
-import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityInterceptor;
+import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntitySqlRewriter;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityRewriter;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
@@ -28,15 +28,15 @@ import java.util.stream.Collectors;
 @Configuration
 public class BaseEntityProxyConfiguration implements ImportAware {
 
-  protected AnnotationAttributes annotationAttributes;
+  private AnnotationAttributes annotationAttributes;
 
-  Map<String, BaseEntityRewriterConfigurer> baseEntityRewriterConfigurerMap;
+  private Map<String, BaseEntityRewriterConfigurer> baseEntityRewriterConfigurerMap;
 
   private boolean removeEnter;
   private int order;
   private BaseEntityRewriter baseEntityRewriter;
 
-  private boolean reportItemNameExists;
+  private boolean disable;
 
   private boolean duplicateKeyUpdate;
 
@@ -47,10 +47,10 @@ public class BaseEntityProxyConfiguration implements ImportAware {
   @Override
   public void setImportMetadata(AnnotationMetadata importMetadata) {
     this.annotationAttributes = AnnotationAttributes.fromMap(
-      importMetadata.getAnnotationAttributes(EnableBaseEntity.class.getName(), false));
+        importMetadata.getAnnotationAttributes(EnableBaseEntity.class.getName(), false));
     if (this.annotationAttributes == null) {
       throw new IllegalArgumentException(
-        EnableBaseEntity.class.getName() + " is not present on importing class " + importMetadata.getClassName());
+          EnableBaseEntity.class.getName() + " is not present on importing class " + importMetadata.getClassName());
     }
   }
 
@@ -60,43 +60,46 @@ public class BaseEntityProxyConfiguration implements ImportAware {
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
-    this.insertAddSelectItemMode = annotationAttributes.getEnum("insertSelectAddItemMode");
+    this.disable = annotationAttributes.getBoolean("disable");
+    this.insertAddSelectItemMode = annotationAttributes.getEnum("insertAddSelectItemMode");
     this.duplicateKeyUpdate = annotationAttributes.getBoolean("duplicateKeyUpdate");
     this.updateItemMode = annotationAttributes.getEnum("updateItemMode");
-    this.reportItemNameExists = annotationAttributes.getBoolean("reportItemNameExists");
     return new BaseEntityBeanPostProcessor();
   }
 
   private void setBaseEntityRewriter(BeanFactory beanFactory) {
-    String baseEntityWriterName = annotationAttributes.getString("baseEntityRewriter");
+    String baseEntityRewriterName = annotationAttributes.getString("baseEntityRewriter");
     BaseEntityRewriterConfigurer baseEntityRewriterConfigurer;
     if (baseEntityRewriterConfigurerMap != null &&
-      (baseEntityRewriterConfigurer = baseEntityRewriterConfigurerMap.get(baseEntityWriterName)) != null) {
+        (baseEntityRewriterConfigurer = baseEntityRewriterConfigurerMap.get(baseEntityRewriterName)) != null) {
       baseEntityRewriter = baseEntityRewriterConfigurer.getBaseEntityRewriter();
     } else {
       try {
-        baseEntityRewriter = beanFactory.getBean(baseEntityWriterName, BaseEntityRewriter.class);
+        baseEntityRewriter = beanFactory.getBean(baseEntityRewriterName, BaseEntityRewriter.class);
       } catch (Exception e) {
-        String msg = String.format("无法获取配置的%s：[%s]", BaseEntityRewriter.class.getName(), baseEntityWriterName);
+        String msg = String.format("无法获取配置的%s：[%s]", BaseEntityRewriter.class.getName(), baseEntityRewriterName);
         throw new BaseEntityException(msg, e);
       }
     }
     if (baseEntityRewriter == null) {
-      String msg = String.format("无法获取配置的%s：[%s]", BaseEntityRewriter.class.getName(), baseEntityWriterName);
+      String msg = String.format("无法获取配置的%s：[%s]", BaseEntityRewriter.class.getName(), baseEntityRewriterName);
       throw new BaseEntityException(msg);
     }
   }
 
   @Autowired(required = false)
-  void setBaseEntityRewriterConfigurers(List<BaseEntityRewriterConfigurer> configurers) {
-    baseEntityRewriterConfigurerMap = configurers.stream().collect(Collectors.toMap(NamedConfigurer::getName, a -> a));
+  public void setBaseEntityRewriterConfigurers(List<BaseEntityRewriterConfigurer> configurers) {
+    baseEntityRewriterConfigurerMap = configurers.stream()
+        .collect(Collectors.toMap(NamedConfigurer::getName, a -> a));
   }
 
-  public class BaseEntityBeanPostProcessor extends AbstractSqlVitaminsBeanPostProcessor<BaseEntityInterceptor> {
+  public class BaseEntityBeanPostProcessor
+      extends AbstractSqlVitaminsBeanPostProcessor<BaseEntitySqlRewriter> {
+
     @Override
-    protected BaseEntityInterceptor getInterceptor() {
-      return new BaseEntityInterceptor(removeEnter, baseEntityRewriter,
-          insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode, reportItemNameExists);
+    protected BaseEntitySqlRewriter getSqlRewriter() {
+      return new BaseEntitySqlRewriter(
+          removeEnter, disable, baseEntityRewriter, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
     }
 
     @Override

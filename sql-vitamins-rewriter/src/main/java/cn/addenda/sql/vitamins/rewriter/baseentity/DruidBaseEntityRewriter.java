@@ -16,12 +16,41 @@ import java.util.List;
  * @since 2023/5/2 19:35
  */
 @Slf4j
-public class DruidBaseEntityRewriter extends AbstractBaseEntityRewriter {
+public class DruidBaseEntityRewriter implements BaseEntityRewriter {
+
+  private final BaseEntitySource baseEntitySource;
+
+  /**
+   * 需要基础字段的表
+   */
+  private final List<String> included;
+
+  /**
+   * 不需要基础字段的表
+   */
+  private final List<String> notIncluded;
+
+  private final DataConvertorRegistry dataConvertorRegistry;
+
+  protected static final List<String> INSERT_COLUMN_NAME_LIST;
+  protected static final List<String> INSERT_FIELD_NAME_LIST;
+  protected static final List<String> UPDATE_COLUMN_NAME_LIST;
+  protected static final List<String> UPDATE_FIELD_NAME_LIST;
+
+  static {
+    INSERT_COLUMN_NAME_LIST = BaseEntity.getAllColumnNameList();
+    INSERT_FIELD_NAME_LIST = BaseEntity.getAllFieldNameList();
+    UPDATE_COLUMN_NAME_LIST = BaseEntity.getUpdateColumnNameList();
+    UPDATE_FIELD_NAME_LIST = BaseEntity.getUpdateFieldNameList();
+  }
 
   public DruidBaseEntityRewriter(
       List<String> included, List<String> notIncluded,
       BaseEntitySource baseEntitySource, DataConvertorRegistry dataConvertorRegistry) {
-    super(baseEntitySource, included, notIncluded, dataConvertorRegistry);
+    this.baseEntitySource = baseEntitySource;
+    this.included = included;
+    this.notIncluded = notIncluded;
+    this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
   public DruidBaseEntityRewriter() {
@@ -31,7 +60,7 @@ public class DruidBaseEntityRewriter extends AbstractBaseEntityRewriter {
   @Override
   public String rewriteInsertSql(
       String sql, InsertAddSelectItemMode insertAddSelectItemMode,
-      boolean duplicateKeyUpdate, UpdateItemMode updateItemMode, boolean reportItemNameExists) {
+      boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
 
       for (int i = 0; i < INSERT_COLUMN_NAME_LIST.size(); i++) {
@@ -39,8 +68,7 @@ public class DruidBaseEntityRewriter extends AbstractBaseEntityRewriter {
         String fieldName = INSERT_FIELD_NAME_LIST.get(i);
         Item item = new Item(columnName, baseEntitySource.get(fieldName));
         new AddInsertItemVisitor((MySqlInsertStatement) sqlStatement, included, notIncluded,
-            // todo 考虑在将reportItemNameExists写死为true。在控制层提供忽略字段的注解
-            dataConvertorRegistry, reportItemNameExists, item, insertAddSelectItemMode,
+            dataConvertorRegistry, true, item, insertAddSelectItemMode,
             duplicateKeyUpdate && UPDATE_FIELD_NAME_LIST.contains(fieldName), updateItemMode).visit();
       }
 
@@ -60,16 +88,14 @@ public class DruidBaseEntityRewriter extends AbstractBaseEntityRewriter {
   }
 
   @Override
-  public String rewriteUpdateSql(
-      String sql, UpdateItemMode updateItemMode, boolean reportItemNameExists) {
+  public String rewriteUpdateSql(String sql, UpdateItemMode updateItemMode) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       for (int i = 0; i < UPDATE_COLUMN_NAME_LIST.size(); i++) {
         String columnName = UPDATE_COLUMN_NAME_LIST.get(i);
         String fieldName = UPDATE_FIELD_NAME_LIST.get(i);
         Item item = new Item(columnName, baseEntitySource.get(fieldName));
         new AddUpdateItemVisitor((MySqlUpdateStatement) sqlStatement, included,
-            // todo 考虑在将reportItemNameExists写死为true。在控制层提供忽略字段的注解
-            notIncluded, dataConvertorRegistry, reportItemNameExists, item, updateItemMode).visit();
+            notIncluded, dataConvertorRegistry, true, item, updateItemMode).visit();
       }
 
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);

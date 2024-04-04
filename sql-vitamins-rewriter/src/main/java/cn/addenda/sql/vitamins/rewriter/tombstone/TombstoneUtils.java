@@ -1,63 +1,57 @@
 package cn.addenda.sql.vitamins.rewriter.tombstone;
 
-import cn.addenda.sql.vitamins.rewriter.function.TRunnable;
-import cn.addenda.sql.vitamins.rewriter.function.TSupplier;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import java.util.function.Supplier;
 
 /**
  * @author addenda
  * @since 2023/5/28 17:56
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TombstoneUtils {
 
-  private TombstoneUtils() {
-  }
-
-  public static <T> T useJoinQuery(boolean joinUseSubQuery, TSupplier<T> supplier) {
-    TombstoneContext.push();
+  public static void tombstone(TombstoneConfig tombstoneConfig, Runnable runnable) {
+    TombstoneContext.push(tombstoneConfig);
     try {
-      TombstoneContext.setJoinUseSubQuery(joinUseSubQuery);
-      return supplier.get();
-    } catch (Throwable throwable) {
-      ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
-      return null;
-    } finally {
-      TombstoneContext.pop();
-    }
-  }
-
-  public static void useJoinQuery(boolean joinUseSubQuery, TRunnable runnable) {
-    TombstoneContext.push();
-    try {
-      TombstoneContext.setJoinUseSubQuery(joinUseSubQuery);
       runnable.run();
     } catch (Throwable throwable) {
-      ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
+      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
     } finally {
       TombstoneContext.pop();
     }
   }
 
-  public static <T> T disable(boolean disable, TSupplier<T> supplier) {
-    TombstoneContext.push();
+  public static <T> T tombstone(TombstoneConfig tombstoneConfig, Supplier<T> supplier) {
+    TombstoneContext.push(tombstoneConfig);
     try {
-      TombstoneContext.setDisable(disable);
       return supplier.get();
     } catch (Throwable throwable) {
-      ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
-      return null;
+      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
     } finally {
       TombstoneContext.pop();
     }
   }
 
-  public static void disable(boolean disable, TRunnable runnable) {
-    TombstoneContext.push();
+  public static void tombstone(Runnable runnable) {
+    TombstoneContext.push(new TombstoneConfig());
     try {
-      TombstoneContext.setDisable(disable);
       runnable.run();
     } catch (Throwable throwable) {
-      ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
+      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
+    } finally {
+      TombstoneContext.pop();
+    }
+  }
+
+  public static <T> T tombstone(Supplier<T> supplier) {
+    TombstoneContext.push(new TombstoneConfig());
+    try {
+      return supplier.get();
+    } catch (Throwable throwable) {
+      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
     } finally {
       TombstoneContext.pop();
     }

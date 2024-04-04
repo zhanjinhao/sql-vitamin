@@ -1,9 +1,7 @@
 package cn.addenda.sql.vitamins.client.spring.aop.tombstone;
 
-import cn.addenda.sql.vitamins.client.common.ConfigContextUtils;
-import cn.addenda.sql.vitamins.client.common.annotation.ConfigJoinUseSubQuery;
-import cn.addenda.sql.vitamins.client.common.annotation.DisableTombstone;
-import cn.addenda.sql.vitamins.client.common.constant.Propagation;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigTombstone;
+import cn.addenda.sql.vitamins.client.common.config.TombstoneConfigUtils;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsSpringInterceptor;
 import cn.addenda.sql.vitamins.client.spring.util.SpringAnnotationUtils;
 import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneContext;
@@ -22,14 +20,11 @@ public class SpringTombstoneInterceptor extends AbstractSqlVitaminsSpringInterce
   public Object invoke(MethodInvocation invocation) throws Throwable {
     Class<?> aClass = invocation.getThis().getClass();
     Method method = invocation.getMethod();
-    Propagation propagation = extract(method, aClass);
 
-    ConfigContextUtils.pushTombstone(propagation);
     try {
-      ConfigContextUtils.configTombstone(propagation,
-        SpringAnnotationUtils.extractAnnotation(method, aClass, DisableTombstone.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigJoinUseSubQuery.class));
-
+      ConfigTombstone configTombstone = SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigTombstone.class);
+      TombstoneConfigUtils.pushTombstone(configTombstone.propagation());
+      TombstoneConfigUtils.configTombstone(configTombstone);
       return invocation.proceed();
     } catch (Throwable throwable) {
       throw ExceptionUtil.unwrapThrowable(throwable);

@@ -41,7 +41,7 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
       List<String> included, List<String> notIncluded) {
     super(sql, identifier);
     this.included = included;
-    this.notIncluded = notIncluded == null ? ArrayUtils.asArrayList("dual") : notIncluded;
+    this.notIncluded = notIncluded;
   }
 
   public IdentifierExistsVisitor(
@@ -49,7 +49,7 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
       List<String> included, List<String> notIncluded) {
     super(sql, identifier);
     this.included = included;
-    this.notIncluded = notIncluded == null ? ArrayUtils.asArrayList("dual") : notIncluded;
+    this.notIncluded = notIncluded;
   }
 
   public IdentifierExistsVisitor(String sql, String identifier) {

@@ -10,10 +10,10 @@ import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 public interface BaseEntityRewriter {
 
   String rewriteInsertSql(String sql, InsertAddSelectItemMode insertAddSelectItemMode,
-                          boolean duplicateKeyUpdate, UpdateItemMode updateItemMode, boolean reportItemNameExists);
+                          boolean duplicateKeyUpdate, UpdateItemMode updateItemMode);
 
   String rewriteSelectSql(String sql, String masterView);
 
-  String rewriteUpdateSql(String sql, UpdateItemMode updateItemMode, boolean reportItemNameExists);
+  String rewriteUpdateSql(String sql, UpdateItemMode updateItemMode);
 
 }

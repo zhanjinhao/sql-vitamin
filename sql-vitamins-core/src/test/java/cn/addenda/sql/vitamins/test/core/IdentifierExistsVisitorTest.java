@@ -1,5 +1,6 @@
 package cn.addenda.sql.vitamins.test.core;
 
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.identifier.IdentifierExistsVisitor;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
@@ -33,7 +34,7 @@ public class IdentifierExistsVisitorTest {
       }
       System.out.println(line + " : ------------------------------------------------------------------------------------");
       System.out.println();
-      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a");
+      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a", null, ArrayUtils.asArrayList("dual"));
       identifierExistsVisitor.visit();
       boolean exists = identifierExistsVisitor.isExists();
       Assert.assertEquals(flag, exists);
@@ -54,7 +55,7 @@ public class IdentifierExistsVisitorTest {
       if (sqlStatements.isEmpty()) {
         continue;
       }
-      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a", Arrays.asList("tab2"), null);
+      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a", ArrayUtils.asArrayList("tab2"), null);
       identifierExistsVisitor.visit();
       boolean exists = identifierExistsVisitor.isExists();
       Assert.assertEquals(flag, exists);
@@ -75,7 +76,7 @@ public class IdentifierExistsVisitorTest {
       if (sqlStatements.isEmpty()) {
         continue;
       }
-      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a", Arrays.asList("tab2"), null);
+      IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(sql, "a", ArrayUtils.asArrayList("tab2"), null);
       identifierExistsVisitor.visit();
       boolean exists = identifierExistsVisitor.isExists();
       Assert.assertEquals(flag, exists);

@@ -36,7 +36,7 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
 
   protected AbstractAddConditionVisitor(List<String> included, List<String> notIncluded, String condition) {
     this.included = included;
-    this.notIncluded = notIncluded == null ? ArrayUtils.asArrayList("dual") : notIncluded;
+    this.notIncluded = notIncluded;
     this.condition = condition;
   }
 

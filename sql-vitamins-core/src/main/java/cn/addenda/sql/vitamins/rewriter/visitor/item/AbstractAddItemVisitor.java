@@ -1,10 +1,9 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.item;
 
 import cn.addenda.sql.vitamins.rewriter.SqlVitaminsException;
-import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
-import cn.addenda.sql.vitamins.rewriter.visitor.SQLBoundVisitor;
+import cn.addenda.sql.vitamins.rewriter.visitor.SqlBoundVisitor;
 import cn.addenda.sql.vitamins.rewriter.visitor.ViewToTableVisitor;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLObject;
@@ -22,7 +21,7 @@ import java.util.List;
  * @author addenda
  * @since 2023/5/17 18:12
  */
-public abstract class AbstractAddItemVisitor<T extends SQLStatement> extends SQLBoundVisitor<T> {
+public abstract class AbstractAddItemVisitor<T extends SQLStatement> extends SqlBoundVisitor<T> {
 
   protected final List<String> included;
 
@@ -31,13 +30,13 @@ public abstract class AbstractAddItemVisitor<T extends SQLStatement> extends SQL
   protected AbstractAddItemVisitor(String sql, List<String> included, List<String> notIncluded) {
     super(sql);
     this.included = included;
-    this.notIncluded = notIncluded == null ? ArrayUtils.asArrayList("dual") : notIncluded;
+    this.notIncluded = notIncluded;
   }
 
   protected AbstractAddItemVisitor(T sqlStatement, List<String> included, List<String> notIncluded) {
     super(sqlStatement);
     this.included = included;
-    this.notIncluded = notIncluded == null ? ArrayUtils.asArrayList("dual") : notIncluded;
+    this.notIncluded = notIncluded;
   }
 
   @Override

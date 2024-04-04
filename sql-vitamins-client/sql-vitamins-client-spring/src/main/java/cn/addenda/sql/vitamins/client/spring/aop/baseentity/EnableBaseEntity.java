@@ -30,11 +30,11 @@ public @interface EnableBaseEntity {
    */
   String baseEntityRewriter() default NamedConfigurer.DEFAULT;
 
-  boolean reportItemNameExists() default false;
+  boolean disable() default false;
 
   boolean duplicateKeyUpdate() default false;
 
-  InsertAddSelectItemMode insertSelectAddItemMode() default InsertAddSelectItemMode.VALUE;
+  InsertAddSelectItemMode insertAddSelectItemMode() default InsertAddSelectItemMode.VALUE;
 
   UpdateItemMode updateItemMode() default UpdateItemMode.NOT_NULL;
 

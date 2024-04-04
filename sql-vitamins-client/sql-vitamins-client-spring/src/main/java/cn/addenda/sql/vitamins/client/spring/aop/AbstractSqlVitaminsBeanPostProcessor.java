@@ -1,20 +1,19 @@
 package cn.addenda.sql.vitamins.client.spring.aop;
 
-import cn.addenda.sql.vitamins.rewriter.InterceptedDataSource;
-import cn.addenda.sql.vitamins.rewriter.Interceptor;
-import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
+import cn.addenda.sql.vitamins.rewriter.ChainedSqlRewriter;
+import cn.addenda.sql.vitamins.rewriter.SqlRewritableDataSource;
+import cn.addenda.sql.vitamins.rewriter.SqlRewriter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.Ordered;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 /**
  * @author addenda
  * @since 2023/6/13 21:17
  */
-public abstract class AbstractSqlVitaminsBeanPostProcessor<T extends Interceptor> implements BeanPostProcessor, Ordered {
+public abstract class AbstractSqlVitaminsBeanPostProcessor<T extends SqlRewriter> implements BeanPostProcessor, Ordered {
 
   @Override
   public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
@@ -24,19 +23,19 @@ public abstract class AbstractSqlVitaminsBeanPostProcessor<T extends Interceptor
   @Override
   public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
     if (bean instanceof DataSource) {
-      if (bean instanceof InterceptedDataSource) {
-        InterceptedDataSource interceptedDataSource = (InterceptedDataSource) bean;
-        InterceptedDataSource.InnerDataSourceProxyImpl dataSourceProxy = interceptedDataSource.getDataSourceProxy();
-        List<Interceptor> interceptorList = dataSourceProxy.getInterceptorList();
-        interceptorList.add(getInterceptor());
-        interceptedDataSource.setDataSourceProxy(new InterceptedDataSource.InnerDataSourceProxyImpl(interceptorList));
+      if (bean instanceof SqlRewritableDataSource) {
+        SqlRewritableDataSource sqlRewritableDataSource = (SqlRewritableDataSource) bean;
+        ChainedSqlRewriter sqlRewriter = (ChainedSqlRewriter) sqlRewritableDataSource.getSqlRewriter();
+        sqlRewriter.add(getSqlRewriter());
       } else {
-        bean = new InterceptedDataSource((DataSource) bean, ArrayUtils.asArrayList(getInterceptor()));
+        ChainedSqlRewriter chainedSQLRewriter = new ChainedSqlRewriter();
+        chainedSQLRewriter.add(getSqlRewriter());
+        bean = new SqlRewritableDataSource((DataSource) bean, chainedSQLRewriter);
       }
     }
     return bean;
   }
 
-  protected abstract T getInterceptor();
+  protected abstract T getSqlRewriter();
 
 }

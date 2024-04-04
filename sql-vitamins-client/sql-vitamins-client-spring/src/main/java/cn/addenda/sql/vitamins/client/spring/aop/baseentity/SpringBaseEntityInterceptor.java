@@ -1,8 +1,7 @@
 package cn.addenda.sql.vitamins.client.spring.aop.baseentity;
 
-import cn.addenda.sql.vitamins.client.common.ConfigContextUtils;
-import cn.addenda.sql.vitamins.client.common.annotation.*;
-import cn.addenda.sql.vitamins.client.common.constant.Propagation;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigBaseEntity;
+import cn.addenda.sql.vitamins.client.common.config.BaseEntityConfigUtils;
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsSpringInterceptor;
 import cn.addenda.sql.vitamins.client.spring.util.SpringAnnotationUtils;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityContext;
@@ -21,18 +20,11 @@ public class SpringBaseEntityInterceptor extends AbstractSqlVitaminsSpringInterc
   public Object invoke(MethodInvocation invocation) throws Throwable {
     Class<?> aClass = invocation.getThis().getClass();
     Method method = invocation.getMethod();
-    Propagation propagation = extract(method, aClass);
 
-    ConfigContextUtils.pushBaseEntity(propagation);
     try {
-      ConfigContextUtils.configBaseEntity(propagation,
-        SpringAnnotationUtils.extractAnnotation(method, aClass, DisableBaseEntity.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigMasterView.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigDuplicateKeyUpdate.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigUpdateItemMode.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigReportItemNameExists.class),
-        SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigInsertSelectAddItemMode.class));
-
+      ConfigBaseEntity configBaseEntity = SpringAnnotationUtils.extractAnnotation(method, aClass, ConfigBaseEntity.class);
+      BaseEntityConfigUtils.pushBaseEntity(configBaseEntity.propagation());
+      BaseEntityConfigUtils.configBaseEntity(configBaseEntity);
       return invocation.proceed();
     } catch (Throwable throwable) {
       throw ExceptionUtil.unwrapThrowable(throwable);

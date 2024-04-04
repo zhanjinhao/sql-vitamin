@@ -1,5 +1,6 @@
 package cn.addenda.sql.vitamins.test.core;
 
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.identifier.IdentifierOfSelectItemExistsVisitor;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
@@ -7,6 +8,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,7 +35,7 @@ public class IdentifierOfSelectItemExistsVisitorTest {
       }
       System.out.println(line + " : ------------------------------------------------------------------------------------");
       System.out.println();
-      IdentifierOfSelectItemExistsVisitor identifierExistsVisitor = new IdentifierOfSelectItemExistsVisitor(sql, "a");
+      IdentifierOfSelectItemExistsVisitor identifierExistsVisitor = new IdentifierOfSelectItemExistsVisitor(sql, "a", null, ArrayUtils.asArrayList("dual"));
       identifierExistsVisitor.visit();
       boolean exists = identifierExistsVisitor.isExists();
       System.out.println(identifierExistsVisitor.getFlagStack());

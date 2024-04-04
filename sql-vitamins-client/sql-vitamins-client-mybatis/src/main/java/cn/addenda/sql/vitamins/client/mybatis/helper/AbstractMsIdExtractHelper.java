@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.client.mybatis.helper;
 
 import cn.addenda.sql.vitamins.client.common.annotation.*;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigBaseEntity;
 import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityException;
 import cn.addenda.sql.vitamins.rewriter.util.AnnotationUtils;
 
@@ -15,22 +16,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
 
-  private final Map<String, ConfigPropagation> configPropagationMap = new ConcurrentHashMap<>();
-  private final Map<String, DisableBaseEntity> disableBaseEntityMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigMasterView> configMasterViewMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigReportItemNameExists> configReportItemNameExistsMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigInsertSelectAddItemMode> configInsertSelectAddItemModeMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigUpdateItemMode> configUpdateItemModeMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigDuplicateKeyUpdate> configDuplicateKeyUpdateMap = new ConcurrentHashMap<>();
-  private final Map<String, DynamicConditions> dynamicConditionsMap = new ConcurrentHashMap<>();
-  private final Map<String, DynamicItems> dynamicItemsMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigDupThenNew> stringConfigDupThenNewMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigJoinUseSubQuery> configJoinUseSubQueryMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigLock> configLockMap = new ConcurrentHashMap<>();
-  private final Map<String, UnCheckAllColumn> unCheckAllColumnMap = new ConcurrentHashMap<>();
-  private final Map<String, UnCheckDmlCondition> unCheckDmlConditionMap = new ConcurrentHashMap<>();
-  private final Map<String, UnCheckExactIdentifier> unCheckExactIdentifierMap = new ConcurrentHashMap<>();
-  private final Map<String, DisableTombstone> disableTombstoneMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigBaseEntity> disableBaseEntityMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigLockingRead> configLockMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigTombstone> disableTombstoneMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigSqlCheck> configSqlCheckMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigDynamicCondition> configDynamicConditionMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigDynamicItem> configDynamicItemMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigDynamicTableName> configDynamicTableNameMap = new ConcurrentHashMap<>();
 
   private final Set<String> suffixSet;
 
@@ -43,99 +35,45 @@ public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
   }
 
   @Override
-  public ConfigPropagation extractConfigPropagation(String msId) {
-    return configPropagationMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigPropagation.class));
-  }
-
-  @Override
-  public DisableBaseEntity extractDisableBaseEntity(String msId) {
+  public ConfigBaseEntity extractConfigBaseEntity(String msId) {
     return disableBaseEntityMap.computeIfAbsent(msId,
-      s -> extract(msId, DisableBaseEntity.class));
+        s -> extract(msId, ConfigBaseEntity.class));
   }
 
   @Override
-  public ConfigMasterView extractConfigMasterView(String msId) {
-    return configMasterViewMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigMasterView.class));
-  }
-
-  @Override
-  public ConfigDuplicateKeyUpdate extractConfigDuplicateKeyUpdate(String msId) {
-    return configDuplicateKeyUpdateMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigDuplicateKeyUpdate.class));
-  }
-
-  @Override
-  public ConfigUpdateItemMode extractConfigUpdateItemMode(String msId) {
-    return configUpdateItemModeMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigUpdateItemMode.class));
-  }
-
-  @Override
-  public ConfigReportItemNameExists extractConfigReportItemNameExists(String msId) {
-    return configReportItemNameExistsMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigReportItemNameExists.class));
-  }
-
-  @Override
-  public ConfigInsertSelectAddItemMode extractConfigInsertSelectAddItemMode(String msId) {
-    return configInsertSelectAddItemModeMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigInsertSelectAddItemMode.class));
-  }
-
-  @Override
-  public DynamicConditions extractDynamicConditions(String msId) {
-    return dynamicConditionsMap.computeIfAbsent(msId,
-      s -> extract(msId, DynamicConditions.class));
-  }
-
-  @Override
-  public DynamicItems extractDynamicItems(String msId) {
-    return dynamicItemsMap.computeIfAbsent(msId,
-      s -> extract(msId, DynamicItems.class));
-  }
-
-  @Override
-  public ConfigDupThenNew extractConfigDupThenNew(String msId) {
-    return stringConfigDupThenNewMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigDupThenNew.class));
-  }
-
-  @Override
-  public ConfigJoinUseSubQuery extractConfigJoinUseSubQuery(String msId) {
-    return configJoinUseSubQueryMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigJoinUseSubQuery.class));
-  }
-
-  @Override
-  public ConfigLock extractConfigLock(String msId) {
+  public ConfigLockingRead extractConfigLock(String msId) {
     return configLockMap.computeIfAbsent(msId,
-      s -> extract(msId, ConfigLock.class));
+        s -> extract(msId, ConfigLockingRead.class));
   }
 
   @Override
-  public UnCheckAllColumn extractUnCheckAllColumn(String msId) {
-    return unCheckAllColumnMap.computeIfAbsent(msId,
-      s -> extract(msId, UnCheckAllColumn.class));
-  }
-
-  @Override
-  public UnCheckDmlCondition extractUnCheckDmlCondition(String msId) {
-    return unCheckDmlConditionMap.computeIfAbsent(msId,
-      s -> extract(msId, UnCheckDmlCondition.class));
-  }
-
-  @Override
-  public UnCheckExactIdentifier extractUnCheckExactIdentifier(String msId) {
-    return unCheckExactIdentifierMap.computeIfAbsent(msId,
-      s -> extract(msId, UnCheckExactIdentifier.class));
-  }
-
-  @Override
-  public DisableTombstone extractDisableTombstone(String msId) {
+  public ConfigTombstone extractConfigTombstone(String msId) {
     return disableTombstoneMap.computeIfAbsent(msId,
-      s -> extract(msId, DisableTombstone.class));
+        s -> extract(msId, ConfigTombstone.class));
+  }
+
+  @Override
+  public ConfigSqlCheck extractConfigSqlCheck(String msId) {
+    return configSqlCheckMap.computeIfAbsent(msId,
+        s -> extract(msId, ConfigSqlCheck.class));
+  }
+
+  @Override
+  public ConfigDynamicCondition extractConfigDynamicCondition(String msId) {
+    return configDynamicConditionMap.computeIfAbsent(msId,
+        s -> extract(msId, ConfigDynamicCondition.class));
+  }
+
+  @Override
+  public ConfigDynamicItem extractConfigDynamicItem(String msId) {
+    return configDynamicItemMap.computeIfAbsent(msId,
+        s -> extract(msId, ConfigDynamicItem.class));
+  }
+
+  @Override
+  public ConfigDynamicTableName extractConfigDynamicTableName(String msId) {
+    return configDynamicTableNameMap.computeIfAbsent(msId,
+        s -> extract(msId, ConfigDynamicTableName.class));
   }
 
   protected <T extends Annotation> T extract(String msId, Class<T> tClass) {
