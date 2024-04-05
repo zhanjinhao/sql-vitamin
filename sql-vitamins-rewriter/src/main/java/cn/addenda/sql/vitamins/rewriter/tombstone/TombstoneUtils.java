@@ -35,26 +35,4 @@ public class TombstoneUtils {
     }
   }
 
-  public static void tombstone(Runnable runnable) {
-    TombstoneContext.push(new TombstoneConfig());
-    try {
-      runnable.run();
-    } catch (Throwable throwable) {
-      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
-    } finally {
-      TombstoneContext.pop();
-    }
-  }
-
-  public static <T> T tombstone(Supplier<T> supplier) {
-    TombstoneContext.push(new TombstoneConfig());
-    try {
-      return supplier.get();
-    } catch (Throwable throwable) {
-      throw ExceptionUtil.reportAsRuntimeException(throwable, TombstoneException.class);
-    } finally {
-      TombstoneContext.pop();
-    }
-  }
-
 }

@@ -1,7 +1,6 @@
 package cn.addenda.sql.vitamins.client.common.annotation;
 
 import cn.addenda.sql.vitamins.client.common.constant.Propagation;
-import cn.addenda.sql.vitamins.rewriter.lockingread.LockingReadContext;
 
 import java.lang.annotation.*;
 
@@ -12,10 +11,10 @@ import java.lang.annotation.*;
 @Inherited
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigLockingRead {
+public @interface ConfigDynamicSuffix {
 
   Propagation propagation() default Propagation.NEW;
 
-  String value() default LockingReadContext.W_LOCK;
+  String value();
 
 }

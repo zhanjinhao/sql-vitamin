@@ -9,6 +9,7 @@ import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.Item;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -42,20 +43,13 @@ public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
       return sql;
     }
 
-    log.debug("Dynamic Item, before sql: [{}].", removeEnter(sql));
-    String newSql;
-    try {
-      newSql = doProcess(removeEnter(sql), dynamicItemConfigList);
-    } catch (Throwable throwable) {
-      String msg = String.format("拼装动态SQL时出错，SQL：[%s]，itemList：[%s]。", removeEnter(sql), dynamicItemConfigList);
-      throw new DynamicSQLException(msg, ExceptionUtil.unwrapThrowable(throwable));
-    }
-
-    log.debug("Dynamic Item, after sql: [{}].", newSql);
-    return newSql;
+    logDebug("Dynamic Item, before sql: [{}].", sql);
+    sql = doRewrite(sql, dynamicItemConfigList);
+    logDebug("Dynamic Item, after sql: [{}].", sql);
+    return sql;
   }
 
-  private String doProcess(String sql, List<DynamicItemConfig> dynamicItemConfigList) {
+  private String doRewrite(String sql, List<DynamicItemConfig> dynamicItemConfigList) {
     String newSql = sql;
 
     for (DynamicItemConfig dynamicItemConfig : dynamicItemConfigList) {
@@ -100,4 +94,8 @@ public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 61000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }

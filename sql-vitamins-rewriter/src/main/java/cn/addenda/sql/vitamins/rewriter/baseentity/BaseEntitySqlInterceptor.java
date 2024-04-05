@@ -6,6 +6,7 @@ import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 /**
  * 只要配置了拦截器就会执行SQL拦截。
@@ -49,21 +50,20 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
     if (Boolean.TRUE.equals(disable)) {
       return sql;
     }
-    log.debug("Base Entity, before sql: [{}].", sql);
 
+    logDebug("Base Entity, before sql: [{}].", sql);
     if (!BaseEntityContext.contextActive()) {
       try {
         BaseEntityContext.push(new BaseEntityConfig());
         sql = doRewrite(sql);
       } finally {
-        BaseEntityContext.remove();
+        BaseEntityContext.pop();
       }
-      return sql;
     } else {
       sql = doRewrite(sql);
     }
+    logDebug("Base Entity, after sql: [{}].", sql);
 
-    log.debug("Base Entity, after sql: [{}].", sql);
     return sql;
   }
 
@@ -85,12 +85,14 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getInsertSelectAddItemMode(), defaultInsertAddSelectItemMode);
         newSql = baseEntityRewriter.rewriteInsertSql(newSql, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
       } else {
-        throw new BaseEntityException("仅支持select、update、delete、insert语句，当前SQL：" + sql + "。");
+        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
+        throw new BaseEntityException(msg);
       }
     } catch (BaseEntityException baseEntityException) {
       throw baseEntityException;
     } catch (Throwable throwable) {
-      throw new BaseEntityException("基础字段填充时出错，SQL：" + sql + "。", ExceptionUtil.unwrapThrowable(throwable));
+      String msg = String.format("物理删除改写为逻辑删除时出错，SQL：[%s]。", removeEnter(sql));
+      throw new BaseEntityException(msg, ExceptionUtil.unwrapThrowable(throwable));
     }
     return newSql;
   }
@@ -100,4 +102,8 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 50000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }

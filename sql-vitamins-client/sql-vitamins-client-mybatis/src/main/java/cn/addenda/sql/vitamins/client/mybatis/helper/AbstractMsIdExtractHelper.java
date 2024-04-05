@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
 
   private final Map<String, ConfigBaseEntity> disableBaseEntityMap = new ConcurrentHashMap<>();
-  private final Map<String, ConfigLockingRead> configLockMap = new ConcurrentHashMap<>();
+  private final Map<String, ConfigDynamicSuffix> configDynamicSuffixMap = new ConcurrentHashMap<>();
   private final Map<String, ConfigTombstone> disableTombstoneMap = new ConcurrentHashMap<>();
   private final Map<String, ConfigSqlCheck> configSqlCheckMap = new ConcurrentHashMap<>();
   private final Map<String, ConfigDynamicCondition> configDynamicConditionMap = new ConcurrentHashMap<>();
@@ -41,9 +41,9 @@ public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
   }
 
   @Override
-  public ConfigLockingRead extractConfigLock(String msId) {
-    return configLockMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigLockingRead.class));
+  public ConfigDynamicSuffix extractConfigDynamicSuffix(String msId) {
+    return configDynamicSuffixMap.computeIfAbsent(msId,
+        s -> extract(msId, ConfigDynamicSuffix.class));
   }
 
   @Override

@@ -3,6 +3,7 @@ package cn.addenda.sql.vitamins.rewriter.sqlcheck;
 import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 /**
  * 只要配置了拦截器就会执行SQL拦截
@@ -44,26 +45,24 @@ public class SqlCheckSqlInterceptor extends AbstractSqlInterceptor {
       return sql;
     }
 
-    log.debug("Sql check - start: {}.", sql);
-
+    logDebug("Sql Check - start: {}.", sql);
     if (!SqlCheckContext.contextActive()) {
       try {
         SqlCheckContext.push(new SqlCheckConfig());
         sql = doRewrite(sql);
       } finally {
-        SqlCheckContext.remove();
+        SqlCheckContext.pop();
       }
       return sql;
     } else {
       sql = doRewrite(sql);
     }
-
-    log.debug("Sql check - end: {}.", sql);
+    logDebug("Sql Check - end: {}.", sql);
 
     return sql;
   }
 
-    private String doRewrite(String sql) {
+  private String doRewrite(String sql) {
     Boolean checkAllColumn =
         JdbcSQLUtils.getOrDefault(SqlCheckContext.getCheckAllColumn(), defaultCheckAllColumn);
     if (Boolean.TRUE.equals(checkAllColumn)
@@ -96,4 +95,8 @@ public class SqlCheckSqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 90000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }

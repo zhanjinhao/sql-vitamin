@@ -1,10 +1,10 @@
-package cn.addenda.sql.vitamins.client.mybatis.interceptor.lockingread;
+package cn.addenda.sql.vitamins.client.mybatis.interceptor.dynamic.suffix;
 
-import cn.addenda.sql.vitamins.client.common.annotation.ConfigLockingRead;
-import cn.addenda.sql.vitamins.client.common.config.LockingReadConfigUtils;
+import cn.addenda.sql.vitamins.client.common.annotation.ConfigDynamicSuffix;
+import cn.addenda.sql.vitamins.client.common.config.DynamicSuffixConfigUtils;
 import cn.addenda.sql.vitamins.client.mybatis.helper.MsIdExtractHelper;
 import cn.addenda.sql.vitamins.client.mybatis.interceptor.AbstractSqlVitaminsMybatisInterceptor;
-import cn.addenda.sql.vitamins.rewriter.lockingread.LockingReadContext;
+import cn.addenda.sql.vitamins.rewriter.dynamic.suffix.DynamicSuffixContext;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -25,13 +25,13 @@ import org.apache.ibatis.session.RowBounds;
     @Signature(type = Executor.class, method = "query",
         args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
 })
-public class MyBatisLockingReadInterceptor extends AbstractSqlVitaminsMybatisInterceptor {
+public class MyBatisDynamicSuffixInterceptor extends AbstractSqlVitaminsMybatisInterceptor {
 
-  public MyBatisLockingReadInterceptor(MsIdExtractHelper msIdExtractHelper) {
+  public MyBatisDynamicSuffixInterceptor(MsIdExtractHelper msIdExtractHelper) {
     super(msIdExtractHelper);
   }
 
-  public MyBatisLockingReadInterceptor() {
+  public MyBatisDynamicSuffixInterceptor() {
   }
 
   @Override
@@ -41,12 +41,12 @@ public class MyBatisLockingReadInterceptor extends AbstractSqlVitaminsMybatisInt
     String msId = ms.getId();
 
     try {
-      ConfigLockingRead configLockingRead = msIdExtractHelper.extractConfigLock(msId);
-      LockingReadConfigUtils.pushLockingRead(configLockingRead.propagation());
-      LockingReadConfigUtils.configLockingRead(configLockingRead);
+      ConfigDynamicSuffix configDynamicSuffix = msIdExtractHelper.extractConfigDynamicSuffix(msId);
+      DynamicSuffixConfigUtils.pushDynamicSuffix(configDynamicSuffix.propagation());
+      DynamicSuffixConfigUtils.configSuffixConfig(configDynamicSuffix);
       return invocation.proceed();
     } finally {
-      LockingReadContext.pop();
+      DynamicSuffixContext.pop();
     }
   }
 

@@ -1,4 +1,4 @@
-package cn.addenda.sql.vitamins.client.spring.aop.lockingread;
+package cn.addenda.sql.vitamins.client.spring.aop.dynamic.suffix;
 
 import cn.addenda.sql.vitamins.client.spring.aop.SqlVitaminsAopMode;
 import org.springframework.context.annotation.Import;
@@ -13,8 +13,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(LockingReadSelector.class)
-public @interface EnableLockingRead {
+@Import(DynamicSuffixSelector.class)
+public @interface EnableDynamicSuffix {
 
   SqlVitaminsAopMode sqlVitaminsAopMode() default SqlVitaminsAopMode.PROXY_CONFIG;
 

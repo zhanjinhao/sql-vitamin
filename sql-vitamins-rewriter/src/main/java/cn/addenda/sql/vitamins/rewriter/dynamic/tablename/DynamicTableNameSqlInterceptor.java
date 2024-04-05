@@ -4,6 +4,7 @@ import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -37,9 +38,9 @@ public class DynamicTableNameSqlInterceptor extends AbstractSqlInterceptor {
       return sql;
     }
 
-    log.debug("Dynamic TableName, before sql: [{}].", removeEnter(sql));
-    sql = doRewrite(removeEnter(sql), dynamicTableNameConfigList);
-    log.debug("Dynamic TableName, after sql: [{}].", sql);
+    logDebug("Dynamic TableName, before sql: [{}].", sql);
+    sql = doRewrite(sql, dynamicTableNameConfigList);
+    logDebug("Dynamic TableName, after sql: [{}].", sql);
 
     return sql;
   }
@@ -64,4 +65,8 @@ public class DynamicTableNameSqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 62000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }

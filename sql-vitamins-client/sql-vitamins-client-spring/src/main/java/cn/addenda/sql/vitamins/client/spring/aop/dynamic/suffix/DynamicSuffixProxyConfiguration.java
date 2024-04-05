@@ -1,7 +1,7 @@
-package cn.addenda.sql.vitamins.client.spring.aop.lockingread;
+package cn.addenda.sql.vitamins.client.spring.aop.dynamic.suffix;
 
 import cn.addenda.sql.vitamins.client.spring.aop.AbstractSqlVitaminsBeanPostProcessor;
-import cn.addenda.sql.vitamins.rewriter.lockingread.LockingReadSqlInterceptor;
+import cn.addenda.sql.vitamins.rewriter.dynamic.suffix.DynamicSuffixSqlInterceptor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @since 2022/9/29 13:51
  */
 @Configuration
-public class LockingReadProxyConfiguration implements ImportAware {
+public class DynamicSuffixProxyConfiguration implements ImportAware {
 
   protected AnnotationAttributes annotationAttributes;
 
@@ -25,27 +25,27 @@ public class LockingReadProxyConfiguration implements ImportAware {
   @Override
   public void setImportMetadata(AnnotationMetadata importMetadata) {
     this.annotationAttributes = AnnotationAttributes.fromMap(
-      importMetadata.getAnnotationAttributes(EnableLockingRead.class.getName(), false));
+        importMetadata.getAnnotationAttributes(EnableDynamicSuffix.class.getName(), false));
     if (this.annotationAttributes == null) {
       throw new IllegalArgumentException(
-        EnableLockingRead.class.getName() + " is not present on importing class " + importMetadata.getClassName());
+          EnableDynamicSuffix.class.getName() + " is not present on importing class " + importMetadata.getClassName());
     }
   }
 
   @Bean
   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-  public LockingReadPostProcessor lockingReadsPostProcessor() {
+  public DynamicSuffixPostProcessor dynamicSuffixPostProcessor() {
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
-    return new LockingReadPostProcessor();
+    return new DynamicSuffixPostProcessor();
   }
 
-  public class LockingReadPostProcessor
-      extends AbstractSqlVitaminsBeanPostProcessor<LockingReadSqlInterceptor> {
+  public class DynamicSuffixPostProcessor
+      extends AbstractSqlVitaminsBeanPostProcessor<DynamicSuffixSqlInterceptor> {
 
     @Override
-    protected LockingReadSqlInterceptor getSqlInterceptor() {
-      return new LockingReadSqlInterceptor(removeEnter);
+    protected DynamicSuffixSqlInterceptor getSqlInterceptor() {
+      return new DynamicSuffixSqlInterceptor(removeEnter);
     }
 
     @Override

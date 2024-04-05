@@ -6,6 +6,7 @@ import cn.addenda.sql.vitamins.rewriter.tombstone.TombstoneException;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -32,18 +33,12 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
     }
 
     List<DynamicConditionConfig> dynamicConditionConfigList = DynamicConditionContext.getDynamicConditionConfigList();
-    if (dynamicConditionConfigList == null) {
+    if (dynamicConditionConfigList == null || dynamicConditionConfigList.isEmpty()) {
       return sql;
     }
-    log.debug("Dynamic Condition, before sql: [{}].", removeEnter(sql));
-    try {
-      sql = doRewrite(removeEnter(sql), dynamicConditionConfigList);
-    } catch (Throwable throwable) {
-      String msg = String.format("拼装动态SQL时出错，SQL：[%s]，conditionList: [%s]。", removeEnter(sql), dynamicConditionConfigList);
-      throw new DynamicSQLException(msg, ExceptionUtil.unwrapThrowable(throwable));
-    }
-
-    log.debug("Dynamic Condition, after sql: [{}].", sql);
+    logDebug("Dynamic Condition, before sql: [{}].", sql);
+    sql = doRewrite(sql, dynamicConditionConfigList);
+    logDebug("Dynamic Condition, after sql: [{}].", sql);
     return sql;
   }
 
@@ -60,7 +55,6 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
       Boolean joinUseSubQuery = dynamicConditionConfig.getJoinUseSubQuery();
 
       try {
-
         if (DynamicConditionOperation.TABLE_ADD_JOIN_CONDITION == dynamicConditionOperation) {
           if (!JdbcSQLUtils.isInsert(newSql)) {
             newSql = dynamicConditionRewriter.tableAddJoinCondition(newSql, tableOrViewName, condition, joinUseSubQuery);
@@ -98,4 +92,8 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 60000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }

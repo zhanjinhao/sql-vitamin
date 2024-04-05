@@ -11,7 +11,7 @@ public interface MsIdExtractHelper {
 
   ConfigBaseEntity extractConfigBaseEntity(String msId);
 
-  ConfigLockingRead extractConfigLock(String msId);
+  ConfigDynamicSuffix extractConfigDynamicSuffix(String msId);
 
   ConfigTombstone extractConfigTombstone(String msId);
 

@@ -4,6 +4,7 @@ import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 /**
  * 只要配置了拦截器就会执行SQL拦截。
@@ -37,21 +38,20 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
     if (Boolean.TRUE.equals(disable)) {
       return sql;
     }
-    log.debug("Tombstone, before sql: [{}].", removeEnter(sql));
 
+    logDebug("Tombstone, before sql: [{}].", sql);
     if (!TombstoneContext.contextActive()) {
       try {
         TombstoneContext.push(new TombstoneConfig());
         sql = doRewrite(sql);
       } finally {
-        TombstoneContext.remove();
+        TombstoneContext.pop();
       }
       return sql;
     } else {
       sql = doRewrite(sql);
     }
-
-    log.debug("Tombstone, after sql: [{}].", removeEnter(sql));
+    logDebug("Tombstone, after sql: [{}].", sql);
     return sql;
   }
 
@@ -71,7 +71,8 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
             JdbcSQLUtils.getOrDefault(TombstoneContext.getJoinUseSubQuery(), defaultJoinUseSubQuery);
         newSql = tombstoneRewriter.rewriteInsertSql(newSql, useSubQuery);
       } else {
-        throw new TombstoneException("仅支持select、update、delete、insert语句，当前SQL：" + sql + "。");
+        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
+        throw new TombstoneException(msg);
       }
     } catch (TombstoneException tombstoneException) {
       throw tombstoneException;
@@ -88,4 +89,8 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
     return MAX / 2 - 70000;
   }
 
+  @Override
+  protected Logger getLogger() {
+    return log;
+  }
 }
