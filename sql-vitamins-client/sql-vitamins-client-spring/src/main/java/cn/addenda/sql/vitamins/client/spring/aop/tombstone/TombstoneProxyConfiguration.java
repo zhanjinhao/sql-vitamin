@@ -32,6 +32,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
   private boolean removeEnter;
   private TombstoneRewriter tombstoneRewriter;
   private boolean disable;
+  private boolean compatibleMode;
   private boolean joinUseSubQuery;
   private boolean includeDeleteTime;
 
@@ -53,6 +54,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
     this.disable = annotationAttributes.getBoolean("disable");
+    this.compatibleMode = annotationAttributes.getBoolean("compatibleMode");
     this.joinUseSubQuery = annotationAttributes.getBoolean("joinUseSubQuery");
     this.includeDeleteTime = annotationAttributes.getBoolean("includeDeleteTime");
     return new TombstoneBeanPostProcessor();
@@ -90,7 +92,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
     @Override
     protected TombstoneSqlInterceptor getSqlInterceptor() {
       return new TombstoneSqlInterceptor(removeEnter, tombstoneRewriter,
-          disable, joinUseSubQuery, includeDeleteTime);
+          disable, compatibleMode, joinUseSubQuery, includeDeleteTime);
     }
 
     @Override

@@ -125,7 +125,7 @@ public class SpringDynamicItemTest {
 
   @SneakyThrows
   private User forceQuery() {
-    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null),
+    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null, null),
         new Supplier<User>() {
           @Override
           @SneakyThrows

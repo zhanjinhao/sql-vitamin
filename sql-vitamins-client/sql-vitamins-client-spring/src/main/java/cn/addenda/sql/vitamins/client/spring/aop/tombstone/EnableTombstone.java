@@ -25,6 +25,8 @@ public @interface EnableTombstone {
 
   boolean disable() default false;
 
+  boolean compatibleMode() default false;
+
   String tombstoneSqlRewriter() default NamedConfigurer.DEFAULT;
 
   boolean joinUseSubQuery() default false;

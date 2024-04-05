@@ -28,6 +28,18 @@ public class BaseEntityContext {
     return baseEntityConfig.getDisable();
   }
 
+  public static void setCompatibleMode(boolean disable) {
+    Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
+    BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();
+    baseEntityConfig.setCompatibleMode(disable);
+  }
+
+  public static Boolean getCompatibleMode() {
+    Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
+    BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();
+    return baseEntityConfig.getCompatibleMode();
+  }
+
   public static void setMasterView(String masterView) {
     Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
     BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();

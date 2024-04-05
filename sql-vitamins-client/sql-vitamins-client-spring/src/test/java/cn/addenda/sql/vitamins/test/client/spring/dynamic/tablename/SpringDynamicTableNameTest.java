@@ -136,7 +136,7 @@ public class SpringDynamicTableNameTest {
   private User forceQuery() {
     return DynamicTableNameUtils.rename("users1", "users", () -> {
 
-      return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null),
+      return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null, null),
           new Supplier<User>() {
             @Override
             @SneakyThrows

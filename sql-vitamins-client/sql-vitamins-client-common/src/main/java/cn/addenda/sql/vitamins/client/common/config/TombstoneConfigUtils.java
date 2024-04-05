@@ -22,6 +22,11 @@ public class TombstoneConfigUtils {
       Propagation.configWithPropagation(propagation, disable,
           TombstoneContext::setDisable, TombstoneContext::getDisable);
     }
+    Boolean compatibleMode = tombstoneConfig.getCompatibleMode();
+    if (compatibleMode != null) {
+      Propagation.configWithPropagation(propagation, compatibleMode,
+          TombstoneContext::setCompatibleMode, TombstoneContext::getCompatibleMode);
+    }
     Boolean joinUseSubQuery = tombstoneConfig.getJoinUseSubQuery();
     if (joinUseSubQuery != null) {
       Propagation.configWithPropagation(propagation, joinUseSubQuery,
@@ -39,6 +44,7 @@ public class TombstoneConfigUtils {
     configTombstone(propagation,
         TombstoneConfig.of(
             BoolConfig.toBoolean(configTombstone.disable()),
+            BoolConfig.toBoolean(configTombstone.compatibleMode()),
             BoolConfig.toBoolean(configTombstone.joinUseSubQuery()),
             BoolConfig.toBoolean(configTombstone.includeDeleteTime())));
   }

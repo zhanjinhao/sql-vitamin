@@ -17,6 +17,7 @@ public @interface ConfigTombstone {
   Propagation propagation() default Propagation.NEW;
 
   BoolConfig disable() default BoolConfig.DEFAULT;
+  BoolConfig compatibleMode() default BoolConfig.DEFAULT;
 
   BoolConfig joinUseSubQuery() default BoolConfig.DEFAULT;
 

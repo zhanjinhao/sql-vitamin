@@ -19,6 +19,7 @@ public @interface ConfigBaseEntity {
   Propagation propagation() default Propagation.NEW;
 
   BoolConfig disable() default BoolConfig.DEFAULT;
+  BoolConfig compatibleMode() default BoolConfig.DEFAULT;
 
   InsertAddSelectItemModeConfig insertAddSelectItemMode() default InsertAddSelectItemModeConfig.DEFAULT;
 

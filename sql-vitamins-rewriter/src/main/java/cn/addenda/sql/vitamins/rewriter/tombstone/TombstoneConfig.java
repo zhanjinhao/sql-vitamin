@@ -10,6 +10,7 @@ import lombok.*;
 public class TombstoneConfig {
 
   private Boolean disable;
+  private Boolean compatibleMode;
 
   private Boolean joinUseSubQuery;
 
@@ -21,8 +22,8 @@ public class TombstoneConfig {
     this.includeDeleteTime = tombstoneConfig.includeDeleteTime;
   }
 
-  public static TombstoneConfig of(Boolean disable, Boolean joinUseSubQuery, Boolean includeDeleteTime) {
-    return new TombstoneConfig(disable, joinUseSubQuery, includeDeleteTime);
+  public static TombstoneConfig of(Boolean disable, Boolean compatibleMode, Boolean joinUseSubQuery, Boolean includeDeleteTime) {
+    return new TombstoneConfig(disable, compatibleMode, joinUseSubQuery, includeDeleteTime);
   }
 
 }

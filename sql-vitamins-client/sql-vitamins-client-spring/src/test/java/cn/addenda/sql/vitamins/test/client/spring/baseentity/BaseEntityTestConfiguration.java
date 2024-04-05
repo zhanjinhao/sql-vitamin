@@ -13,7 +13,7 @@ import javax.sql.DataSource;
  * @since 2023/7/24 9:49
  */
 @Configuration
-@EnableBaseEntity
+@EnableBaseEntity(compatibleMode = true)
 public class BaseEntityTestConfiguration {
 
   @Bean

@@ -17,8 +17,8 @@ import javax.sql.DataSource;
  * @since 2023/7/24 9:49
  */
 @Configuration
-@EnableTombstone
-@EnableBaseEntity
+@EnableTombstone(compatibleMode = true)
+@EnableBaseEntity(compatibleMode = true)
 @EnableDynamicCondition
 public class DynamicConditionTestConfiguration {
 

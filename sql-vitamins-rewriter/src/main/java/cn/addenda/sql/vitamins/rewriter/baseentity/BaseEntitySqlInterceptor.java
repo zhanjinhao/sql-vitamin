@@ -19,12 +19,13 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
 
   private final BaseEntityRewriter baseEntityRewriter;
   private final boolean defaultDisable;
+  private final boolean defaultCompatibleMode;
   private final InsertAddSelectItemMode defaultInsertAddSelectItemMode;
   private final boolean defaultDuplicateKeyUpdate;
   private final UpdateItemMode defaultUpdateItemMode;
 
   public BaseEntitySqlInterceptor(
-      boolean removeEnter, boolean disable,
+      boolean removeEnter, boolean disable, boolean compatibleMode,
       BaseEntityRewriter baseEntityRewriter, InsertAddSelectItemMode insertAddSelectItemMode,
       boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
     super(removeEnter);
@@ -38,6 +39,7 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
       throw new BaseEntityException("`updateItemMode` can not be null!");
     }
     this.defaultDisable = disable;
+    this.defaultCompatibleMode = compatibleMode;
     this.baseEntityRewriter = baseEntityRewriter;
     this.defaultInsertAddSelectItemMode = insertAddSelectItemMode;
     this.defaultDuplicateKeyUpdate = duplicateKeyUpdate;
@@ -85,9 +87,18 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
         InsertAddSelectItemMode insertAddSelectItemMode =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getInsertSelectAddItemMode(), defaultInsertAddSelectItemMode);
         newSql = baseEntityRewriter.rewriteInsertSql(newSql, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+      } else if (JdbcSQLUtils.isDelete(newSql)) {
+        // delete语法不会影响baseEntity，直接不处理
       } else {
-        // todo 是否需要设置一个兼容模式/强限制模式？日志/仍异常
-        log.info("仅支持select、update、delete、insert语句，当前SQL：[{}]。", removeEnter(sql));
+        // 非CURD语句，有可能是修改数据，此时会影响baseEntity的功能。
+        // 兼容模式跳过非CURD数据。非兼容模式抛异常阻止SQL执行。
+        Boolean compatibleMode = JdbcSQLUtils.getOrDefault(BaseEntityContext.getCompatibleMode(), defaultCompatibleMode);
+        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
+        if (Boolean.TRUE.equals(compatibleMode)) {
+          log.info(msg);
+        } else {
+          throw new BaseEntityException(msg);
+        }
       }
     } catch (BaseEntityException baseEntityException) {
       throw baseEntityException;

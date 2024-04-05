@@ -26,6 +26,11 @@ public class BaseEntityConfigUtils {
       Propagation.configWithPropagation(propagation, disable,
           BaseEntityContext::setDisable, BaseEntityContext::getDisable);
     }
+    Boolean compatibleMode = baseEntityConfig.getCompatibleMode();
+    if (compatibleMode != null) {
+      Propagation.configWithPropagation(propagation, compatibleMode,
+          BaseEntityContext::setCompatibleMode, BaseEntityContext::getCompatibleMode);
+    }
     InsertAddSelectItemMode insertAddSelectItemMode = baseEntityConfig.getInsertAddSelectItemMode();
     if (insertAddSelectItemMode != null) {
       Propagation.configWithPropagation(propagation, insertAddSelectItemMode,
@@ -53,6 +58,7 @@ public class BaseEntityConfigUtils {
         configBaseEntity.propagation(),
         BaseEntityConfig.of(
             BoolConfig.toBoolean(configBaseEntity.disable()),
+            BoolConfig.toBoolean(configBaseEntity.compatibleMode()),
             configBaseEntity.masterView(),
             BoolConfig.toBoolean(configBaseEntity.duplicateKeyUpdate()),
             InsertAddSelectItemModeConfig.toInsertAddSelectItemMode(configBaseEntity.insertAddSelectItemMode()),

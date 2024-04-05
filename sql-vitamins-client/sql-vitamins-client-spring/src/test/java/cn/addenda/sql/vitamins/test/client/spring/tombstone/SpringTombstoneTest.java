@@ -81,7 +81,7 @@ public class SpringTombstoneTest {
 
   @SneakyThrows
   private void delete(int id) {
-    TombstoneUtils.tombstone(TombstoneConfig.of(null, null, true), new Runnable() {
+    TombstoneUtils.tombstone(TombstoneConfig.of(null, null, null, true), new Runnable() {
       @Override
       @SneakyThrows
       public void run() {
@@ -96,7 +96,7 @@ public class SpringTombstoneTest {
 
   @SneakyThrows
   private User forceQuery() {
-    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null),
+    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null, null),
         new Supplier<User>() {
           @Override
           @SneakyThrows
@@ -119,7 +119,8 @@ public class SpringTombstoneTest {
                 user.setIfDel(resultSet.getInt("if_del"));
                 user.setDeleteTime(
                     Optional.ofNullable(resultSet.getTimestamp("delete_time"))
-                        .map(Timestamp::toLocalDateTime).orElse(null));              }
+                        .map(Timestamp::toLocalDateTime).orElse(null));
+              }
               return user;
             }
           }

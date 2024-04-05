@@ -1,6 +1,8 @@
 package cn.addenda.sql.vitamins.rewriter.tombstone;
 
 import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
+import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityContext;
+import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityException;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +19,20 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
 
   private final TombstoneRewriter tombstoneRewriter;
   private final boolean defaultDisable;
+  private final boolean defaultCompatibleMode;
   private final boolean defaultJoinUseSubQuery;
   private final boolean defaultIncludeDeleteTime;
 
   public TombstoneSqlInterceptor(
       boolean removeEnter, TombstoneRewriter tombstoneRewriter,
-      boolean defaultDisable, boolean includeDeleteTime, boolean joinUseSubQuery) {
+      boolean defaultDisable, boolean compatibleMode, boolean includeDeleteTime, boolean joinUseSubQuery) {
     super(removeEnter);
     if (tombstoneRewriter == null) {
       throw new TombstoneException("`tombstoneRewriter` can not be null!");
     }
     this.tombstoneRewriter = tombstoneRewriter;
     this.defaultDisable = defaultDisable;
+    this.defaultCompatibleMode = compatibleMode;
     this.defaultIncludeDeleteTime = includeDeleteTime;
     this.defaultJoinUseSubQuery = joinUseSubQuery;
   }
@@ -74,7 +78,15 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
             JdbcSQLUtils.getOrDefault(TombstoneContext.getJoinUseSubQuery(), defaultJoinUseSubQuery);
         newSql = tombstoneRewriter.rewriteInsertSql(newSql, useSubQuery);
       } else {
-        log.info("仅支持select、update、delete、insert语句，当前SQL：[{}]。", removeEnter(sql));
+        // 非CURD语句，有可能是修改数据，此时会影响baseEntity的功能。
+        // 兼容模式跳过非CURD数据。非兼容模式抛异常阻止SQL执行。
+        Boolean compatibleMode = JdbcSQLUtils.getOrDefault(TombstoneContext.getCompatibleMode(), defaultCompatibleMode);
+        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
+        if (Boolean.TRUE.equals(compatibleMode)) {
+          log.info(msg);
+        } else {
+          throw new BaseEntityException(msg);
+        }
       }
     } catch (TombstoneException tombstoneException) {
       throw tombstoneException;

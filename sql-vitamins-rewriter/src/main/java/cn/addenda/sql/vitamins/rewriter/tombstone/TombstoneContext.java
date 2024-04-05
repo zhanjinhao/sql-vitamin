@@ -39,6 +39,18 @@ public class TombstoneContext {
     return tombstoneConfig.getDisable();
   }
 
+  public static void setCompatibleMode(boolean disable) {
+    Deque<TombstoneConfig> tombstoneConfigDeque = CONTEXT_TL.get();
+    TombstoneConfig tombstoneConfig = tombstoneConfigDeque.peek();
+    tombstoneConfig.setCompatibleMode(disable);
+  }
+
+  public static Boolean getCompatibleMode() {
+    Deque<TombstoneConfig> tombstoneConfigDeque = CONTEXT_TL.get();
+    TombstoneConfig tombstoneConfig = tombstoneConfigDeque.peek();
+    return tombstoneConfig.getCompatibleMode();
+  }
+
   public static void setIncludeDeleteTime(boolean includeDeleteTime) {
     Deque<TombstoneConfig> tombstoneConfigDeque = CONTEXT_TL.get();
     TombstoneConfig tombstoneConfig = tombstoneConfigDeque.peek();
