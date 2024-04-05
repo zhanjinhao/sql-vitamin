@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.rewriter.dynamic.tablename;
 
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,14 @@ public class DynamicTableNameUtils {
     } finally {
       DynamicTableNameContext.pop();
     }
+  }
+
+  public static void rename(DynamicTableNameConfig dynamicTableNameConfig, Runnable runnable) {
+    rename(DynamicTableNameConfigBatch.of(ArrayUtils.asArrayList(dynamicTableNameConfig)), runnable);
+  }
+
+  public static <T> T rename(DynamicTableNameConfig dynamicTableNameConfig, Supplier<T> supplier) {
+    return rename(DynamicTableNameConfigBatch.of(ArrayUtils.asArrayList(dynamicTableNameConfig)), supplier);
   }
 
   public static void rename(String originTableName, String targetTableName, Runnable runnable) {

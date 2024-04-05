@@ -34,22 +34,21 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
   @Override
   public String rewrite(String sql) {
 
-    Boolean disable = JdbcSQLUtils.getOrDefault(TombstoneContext.getDisable(), defaultDisable);
-    if (Boolean.TRUE.equals(disable)) {
-      return sql;
-    }
-
     logDebug("Tombstone, before sql: [{}].", sql);
     if (!TombstoneContext.contextActive()) {
-      try {
-        TombstoneContext.push(new TombstoneConfig());
-        sql = doRewrite(sql);
-      } finally {
-        TombstoneContext.pop();
+      if (!defaultDisable) {
+        try {
+          TombstoneContext.push(new TombstoneConfig());
+          sql = doRewrite(sql);
+        } finally {
+          TombstoneContext.pop();
+        }
       }
-      return sql;
     } else {
-      sql = doRewrite(sql);
+      Boolean disable = JdbcSQLUtils.getOrDefault(TombstoneContext.getDisable(), defaultDisable);
+      if (Boolean.FALSE.equals(disable)) {
+        sql = doRewrite(sql);
+      }
     }
     logDebug("Tombstone, after sql: [{}].", sql);
     return sql;
@@ -71,8 +70,7 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
             JdbcSQLUtils.getOrDefault(TombstoneContext.getJoinUseSubQuery(), defaultJoinUseSubQuery);
         newSql = tombstoneRewriter.rewriteInsertSql(newSql, useSubQuery);
       } else {
-        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
-        throw new TombstoneException(msg);
+        log.info("仅支持select、update、delete、insert语句，当前SQL：[{}]。", removeEnter(sql));
       }
     } catch (TombstoneException tombstoneException) {
       throw tombstoneException;

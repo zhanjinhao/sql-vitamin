@@ -23,6 +23,8 @@ public @interface EnableDynamicCondition {
 
   boolean removeEnter() default true;
 
+  boolean joinUseSubQuery() default false;
+
   String dynamicConditionRewriter() default NamedConfigurer.DEFAULT;
 
 }

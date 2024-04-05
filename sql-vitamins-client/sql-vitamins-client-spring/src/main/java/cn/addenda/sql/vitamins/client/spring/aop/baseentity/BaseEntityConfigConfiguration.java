@@ -32,10 +32,10 @@ public class BaseEntityConfigConfiguration implements ImportAware {
   @Bean
   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
   public BaseEntityAdvisor baseEntityAdvisor() {
-    BaseEntityAdvisor argResLogAdvisor = new BaseEntityAdvisor();
-    argResLogAdvisor.setAdvice(new SpringBaseEntityInterceptor());
-    argResLogAdvisor.setOrder(annotationAttributes.<Integer>getNumber("order"));
-    return argResLogAdvisor;
+    BaseEntityAdvisor baseEntityAdvisor = new BaseEntityAdvisor();
+    baseEntityAdvisor.setAdvice(new SpringBaseEntityInterceptor());
+    baseEntityAdvisor.setOrder(annotationAttributes.<Integer>getNumber("order"));
+    return baseEntityAdvisor;
   }
 
 }

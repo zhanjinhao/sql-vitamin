@@ -46,21 +46,22 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public String rewrite(String sql) {
-    Boolean disable = JdbcSQLUtils.getOrDefault(BaseEntityContext.getDisable(), defaultDisable);
-    if (Boolean.TRUE.equals(disable)) {
-      return sql;
-    }
 
     logDebug("Base Entity, before sql: [{}].", sql);
     if (!BaseEntityContext.contextActive()) {
-      try {
-        BaseEntityContext.push(new BaseEntityConfig());
-        sql = doRewrite(sql);
-      } finally {
-        BaseEntityContext.pop();
+      if (!defaultDisable) {
+        try {
+          BaseEntityContext.push(new BaseEntityConfig());
+          sql = doRewrite(sql);
+        } finally {
+          BaseEntityContext.pop();
+        }
       }
     } else {
-      sql = doRewrite(sql);
+      Boolean disable = JdbcSQLUtils.getOrDefault(BaseEntityContext.getDisable(), defaultDisable);
+      if (Boolean.FALSE.equals(disable)) {
+        sql = doRewrite(sql);
+      }
     }
     logDebug("Base Entity, after sql: [{}].", sql);
 
@@ -85,8 +86,8 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getInsertSelectAddItemMode(), defaultInsertAddSelectItemMode);
         newSql = baseEntityRewriter.rewriteInsertSql(newSql, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
       } else {
-        String msg = String.format("仅支持select、update、delete、insert语句，当前SQL：[%s]。", removeEnter(sql));
-        throw new BaseEntityException(msg);
+        // todo 是否需要设置一个兼容模式/强限制模式？日志/仍异常
+        log.info("仅支持select、update、delete、insert语句，当前SQL：[{}]。", removeEnter(sql));
       }
     } catch (BaseEntityException baseEntityException) {
       throw baseEntityException;

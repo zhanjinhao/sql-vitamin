@@ -18,4 +18,8 @@ public class SqlCheckConfigurer implements NamedConfigurer {
     this.sqlChecker = new DruidSqlChecker();
   }
 
+  public SqlCheckConfigurer(SqlChecker sqlChecker) {
+    this.sqlChecker = sqlChecker;
+  }
+
 }

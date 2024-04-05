@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.rewriter.dynamic.condition;
 
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,14 @@ public class DynamicConditionUtils {
     } finally {
       DynamicConditionContext.pop();
     }
+  }
+
+  public static void dynamicCondition(DynamicConditionConfig dynamicConditionConfig, Runnable runnable) {
+    dynamicCondition(DynamicConditionConfigBatch.of(ArrayUtils.asArrayList(dynamicConditionConfig)), runnable);
+  }
+
+  public static <T> T dynamicCondition(DynamicConditionConfig dynamicConditionConfig, Supplier<T> supplier) {
+    return dynamicCondition(DynamicConditionConfigBatch.of(ArrayUtils.asArrayList(dynamicConditionConfig)), supplier);
   }
 
   public static void tableAddJoinCondition(String tableOrViewName, String condition, boolean joinUseSubQuery, Runnable runnable) {

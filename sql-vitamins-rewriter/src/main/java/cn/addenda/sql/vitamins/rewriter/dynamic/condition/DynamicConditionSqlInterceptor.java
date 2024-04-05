@@ -19,10 +19,13 @@ import java.util.List;
 @Slf4j
 public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
 
+  private final boolean defaultJoinUseSubQuery;
   private final DynamicConditionRewriter dynamicConditionRewriter;
 
-  public DynamicConditionSqlInterceptor(boolean removeEnter, DynamicConditionRewriter dynamicConditionRewriter) {
+  public DynamicConditionSqlInterceptor(
+      boolean removeEnter, boolean joinUseSubQuery, DynamicConditionRewriter dynamicConditionRewriter) {
     super(removeEnter);
+    this.defaultJoinUseSubQuery = joinUseSubQuery;
     this.dynamicConditionRewriter = dynamicConditionRewriter;
   }
 
@@ -52,7 +55,7 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
         tableOrViewName = null;
       }
       String condition = dynamicConditionConfig.getCondition();
-      Boolean joinUseSubQuery = dynamicConditionConfig.getJoinUseSubQuery();
+      Boolean joinUseSubQuery = JdbcSQLUtils.getOrDefault(dynamicConditionConfig.getJoinUseSubQuery(), defaultJoinUseSubQuery);
 
       try {
         if (DynamicConditionOperation.TABLE_ADD_JOIN_CONDITION == dynamicConditionOperation) {
@@ -89,7 +92,7 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public int order() {
-    return MAX / 2 - 60000;
+    return MAX / 2 - 61000;
   }
 
   @Override

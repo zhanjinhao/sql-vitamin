@@ -39,4 +39,11 @@ public class DynamicItemConfig {
         insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
   }
 
+  public static DynamicItemConfig of(
+      DynamicItemOperation dynamicItemOperation, String tableName,
+      String itemName, Object itemValue) {
+    return new DynamicItemConfig(dynamicItemOperation, tableName,
+        itemName, itemValue, null, null, null);
+  }
+
 }

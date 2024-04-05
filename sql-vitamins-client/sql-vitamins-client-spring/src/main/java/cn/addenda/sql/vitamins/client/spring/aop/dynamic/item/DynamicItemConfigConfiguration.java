@@ -40,7 +40,7 @@ public class DynamicItemConfigConfiguration implements ImportAware {
 
   @Bean
   @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-  public DynamicItemAdvisor dynamicSQLAdvisor(BeanFactory beanFactory) {
+  public DynamicItemAdvisor dynamicItemAdvisor(BeanFactory beanFactory) {
     DynamicItemAdvisor argResLogAdvisor = new DynamicItemAdvisor();
     SpringDynamicItemInterceptor springDynamicItemInterceptor = new SpringDynamicItemInterceptor();
     DataConvertorRegistry dataConvertorRegistry = getDataConvertorRegistry(beanFactory);

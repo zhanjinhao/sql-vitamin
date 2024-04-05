@@ -18,4 +18,8 @@ public class DataConvertorRegistryConfigurer implements NamedConfigurer {
     this.dataConvertorRegistry = new DefaultDataConvertorRegistry();
   }
 
+  public DataConvertorRegistryConfigurer(DataConvertorRegistry dataConvertorRegistry) {
+    this.dataConvertorRegistry = dataConvertorRegistry;
+  }
+
 }

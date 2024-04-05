@@ -5,6 +5,8 @@ import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DruidDynamicConditionR
 import cn.addenda.sql.vitamins.rewriter.dynamic.condition.DynamicConditionRewriter;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * @author addenda
  * @since 2023/6/13 21:07
@@ -15,7 +17,15 @@ public class DynamicConditionRewriterConfigurer implements NamedConfigurer {
   private final DynamicConditionRewriter dynamicConditionRewriter;
 
   public DynamicConditionRewriterConfigurer() {
-    this.dynamicConditionRewriter = new DruidDynamicConditionRewriter(null);
+    this.dynamicConditionRewriter = new DruidDynamicConditionRewriter();
+  }
+
+  public DynamicConditionRewriterConfigurer(List<String> notIncluded) {
+    this.dynamicConditionRewriter = new DruidDynamicConditionRewriter(notIncluded);
+  }
+
+  public DynamicConditionRewriterConfigurer(DynamicConditionRewriter dynamicConditionRewriter) {
+    this.dynamicConditionRewriter = dynamicConditionRewriter;
   }
 
 }

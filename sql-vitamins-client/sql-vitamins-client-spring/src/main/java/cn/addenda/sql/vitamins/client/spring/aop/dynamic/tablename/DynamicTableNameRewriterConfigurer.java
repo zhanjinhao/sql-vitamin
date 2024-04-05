@@ -18,4 +18,8 @@ public class DynamicTableNameRewriterConfigurer implements NamedConfigurer {
     this.dynamicTableNameRewriter = new DruidDynamicTableNameRewriter();
   }
 
+  public DynamicTableNameRewriterConfigurer(DynamicTableNameRewriter dynamicTableNameRewriter) {
+    this.dynamicTableNameRewriter = dynamicTableNameRewriter;
+  }
+
 }

@@ -49,6 +49,7 @@ public class DynamicTableNameSqlInterceptor extends AbstractSqlInterceptor {
     try {
       String newSql = sql;
       for (DynamicTableNameConfig dynamicTableNameConfig : dynamicTableNameConfigList) {
+        // 如果SQL里没有original表名，则不会替换
         newSql = dynamicTableNameRewriter.rename(
             newSql, dynamicTableNameConfig.getOriginalTableName(), dynamicTableNameConfig.getTargetTableName());
       }
@@ -62,7 +63,7 @@ public class DynamicTableNameSqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public int order() {
-    return MAX / 2 - 62000;
+    return MAX / 2 - 60000;
   }
 
   @Override

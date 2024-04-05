@@ -1,6 +1,8 @@
 package cn.addenda.sql.vitamins.rewriter.tombstone;
 
 /**
+ * todo 需要增加delete_time字段
+ *
  * @author addenda
  * @since 2023/4/30 19:38
  */

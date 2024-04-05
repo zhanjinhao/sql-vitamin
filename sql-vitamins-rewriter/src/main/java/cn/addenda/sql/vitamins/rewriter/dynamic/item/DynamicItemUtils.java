@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.rewriter.dynamic.item;
 
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
+import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
 import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
@@ -40,15 +41,23 @@ public class DynamicItemUtils {
     }
   }
 
+  public static void dynamicItem(DynamicItemConfig dynamicItemConfig, Runnable runnable) {
+    dynamicItem(DynamicItemConfigBatch.of(ArrayUtils.asArrayList(dynamicItemConfig)), runnable);
+  }
+
+  public static <T> T dynamicItem(DynamicItemConfig dynamicItemConfig, Supplier<T> supplier) {
+    return dynamicItem(DynamicItemConfigBatch.of(ArrayUtils.asArrayList(dynamicItemConfig)), supplier);
+  }
+
   public static void insertAddItem(
       String tableName, String itemName, Object itemValue,
       InsertAddSelectItemMode insertAddSelectItemMode, Boolean duplicateKeyUpdate,
       UpdateItemMode updateItemMode, Runnable runnable) {
-    DynamicItemConfig dynamicdynamicItemConfigConfig = new DynamicItemConfig(
+    DynamicItemConfig dynamicItemConfigConfig = new DynamicItemConfig(
         DynamicItemOperation.INSERT_ADD_ITEM, tableName, itemName, itemValue,
         insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
     List<DynamicItemConfig> dynamicItemConfigList = new ArrayList<>();
-    dynamicItemConfigList.add(dynamicdynamicItemConfigConfig);
+    dynamicItemConfigList.add(dynamicItemConfigConfig);
     dynamicItem(DynamicItemConfigBatch.of(dynamicItemConfigList), runnable);
   }
 

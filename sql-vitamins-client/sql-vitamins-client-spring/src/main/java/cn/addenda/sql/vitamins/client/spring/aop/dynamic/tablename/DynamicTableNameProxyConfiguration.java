@@ -45,15 +45,15 @@ public class DynamicTableNameProxyConfiguration implements ImportAware {
   }
 
   @Bean
-  public DynamicTableNameBeanPostProcessor dynamicSQLBeanPostProcessor(BeanFactory beanFactory) {
-    setDynamicSQLRewriter(beanFactory);
+  public DynamicTableNameBeanPostProcessor dynamicTableNameBeanPostProcessor(BeanFactory beanFactory) {
+    setDynamicTableNameRewriter(beanFactory);
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
     return new DynamicTableNameBeanPostProcessor();
   }
 
-  private void setDynamicSQLRewriter(BeanFactory beanFactory) {
+  private void setDynamicTableNameRewriter(BeanFactory beanFactory) {
     String dynamicTableNameRewriterName = annotationAttributes.getString("dynamicTableNameRewriter");
     DynamicTableNameRewriterConfigurer dynamicTableNameRewriterConfigurer;
     if (dynamicTableNameRewriterConfigurerMap != null &&

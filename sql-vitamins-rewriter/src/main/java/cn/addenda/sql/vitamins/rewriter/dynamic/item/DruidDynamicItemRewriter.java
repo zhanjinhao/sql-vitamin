@@ -7,15 +7,24 @@ import cn.addenda.sql.vitamins.rewriter.visitor.item.*;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlInsertStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateStatement;
 
+import java.util.List;
+
 /**
  * @author addenda
  * @since 2023/4/30 16:56
  */
 public class DruidDynamicItemRewriter implements DynamicItemRewriter {
+  private final List<String> notIncluded;
 
   private final DataConvertorRegistry dataConvertorRegistry;
 
   public DruidDynamicItemRewriter(DataConvertorRegistry dataConvertorRegistry) {
+    this.notIncluded = null;
+    this.dataConvertorRegistry = dataConvertorRegistry;
+  }
+
+  public DruidDynamicItemRewriter(List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
+    this.notIncluded = notIncluded;
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
@@ -26,7 +35,7 @@ public class DruidDynamicItemRewriter implements DynamicItemRewriter {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       MySqlInsertStatement insertStatement = (MySqlInsertStatement) sqlStatement;
       new AddInsertItemVisitor(
-          insertStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), null,
+          insertStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), notIncluded,
           dataConvertorRegistry, true, item,
           insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode).visit();
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
@@ -40,7 +49,7 @@ public class DruidDynamicItemRewriter implements DynamicItemRewriter {
       MySqlUpdateStatement updateStatement = (MySqlUpdateStatement) sqlStatement;
 
       new AddUpdateItemVisitor(
-          updateStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), null,
+          updateStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), notIncluded,
           dataConvertorRegistry, true, item, updateItemMode).visit();
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });

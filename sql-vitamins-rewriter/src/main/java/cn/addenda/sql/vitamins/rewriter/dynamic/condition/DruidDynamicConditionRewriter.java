@@ -7,7 +7,6 @@ import cn.addenda.sql.vitamins.rewriter.visitor.condition.TableAddWhereCondition
 import cn.addenda.sql.vitamins.rewriter.visitor.condition.ViewAddJoinConditionVisitor;
 import cn.addenda.sql.vitamins.rewriter.visitor.condition.ViewAddWhereConditionVisitor;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,13 +14,16 @@ import java.util.List;
  * @since 2023/4/30 16:56
  */
 public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
-  private List<String> notIncluded;
+
+  // todo excluded
+  private final List<String> notIncluded;
+
+  public DruidDynamicConditionRewriter() {
+    this.notIncluded = null;
+  }
 
   public DruidDynamicConditionRewriter(List<String> notIncluded) {
     this.notIncluded = notIncluded;
-  }
-
-  public DruidDynamicConditionRewriter() {
   }
 
   @Override
@@ -29,7 +31,8 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
       String sql, String tableOrViewName, String condition, boolean useSubQuery) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new TableAddJoinConditionVisitor(
-          tableOrViewName == null ? null : Collections.singletonList(tableOrViewName), notIncluded, condition, useSubQuery, true));
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded,
+          condition, useSubQuery, true));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
   }
@@ -39,7 +42,8 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
       String sql, String tableOrViewName, String condition, boolean useSubQuery) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new ViewAddJoinConditionVisitor(
-          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded, condition, useSubQuery, true));
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded,
+          condition, useSubQuery, true));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
   }

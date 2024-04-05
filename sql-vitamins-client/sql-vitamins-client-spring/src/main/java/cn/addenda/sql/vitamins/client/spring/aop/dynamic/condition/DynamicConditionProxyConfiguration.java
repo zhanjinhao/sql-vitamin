@@ -28,10 +28,11 @@ public class DynamicConditionProxyConfiguration implements ImportAware {
 
   private AnnotationAttributes annotationAttributes;
 
-  Map<String, DynamicConditionRewriterConfigurer> dynamicConditionRewriterConfigurerMap;
+  private Map<String, DynamicConditionRewriterConfigurer> dynamicConditionRewriterConfigurerMap;
 
   private int order;
   private boolean removeEnter;
+  private boolean joinUseSubQuery;
   private DynamicConditionRewriter dynamicConditionRewriter;
 
   @Override
@@ -45,11 +46,12 @@ public class DynamicConditionProxyConfiguration implements ImportAware {
   }
 
   @Bean
-  public DynamicConditionBeanPostProcessor dynamicSQLBeanPostProcessor(BeanFactory beanFactory) {
+  public DynamicConditionBeanPostProcessor dynamicConditionBeanPostProcessor(BeanFactory beanFactory) {
     setDynamicSQLRewriter(beanFactory);
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
+    this.joinUseSubQuery = annotationAttributes.getBoolean("joinUseSubQuery");
     return new DynamicConditionBeanPostProcessor();
   }
 
@@ -84,7 +86,7 @@ public class DynamicConditionProxyConfiguration implements ImportAware {
 
     @Override
     protected DynamicConditionSqlInterceptor getSqlInterceptor() {
-      return new DynamicConditionSqlInterceptor(removeEnter, dynamicConditionRewriter);
+      return new DynamicConditionSqlInterceptor(removeEnter, joinUseSubQuery, dynamicConditionRewriter);
     }
 
     @Override

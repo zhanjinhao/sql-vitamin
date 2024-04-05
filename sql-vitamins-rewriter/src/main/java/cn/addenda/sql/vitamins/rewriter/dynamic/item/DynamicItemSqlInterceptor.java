@@ -22,13 +22,21 @@ import java.util.List;
 @Slf4j
 public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
 
+  private final InsertAddSelectItemMode defaultInsertAddSelectItemMode;
+  private final boolean defaultDuplicateKeyUpdate;
+  private final UpdateItemMode defaultUpdateItemMode;
   private final DynamicItemRewriter dynamicItemRewriter;
 
-  public DynamicItemSqlInterceptor(boolean removeEnter, DynamicItemRewriter dynamicItemRewriter) {
+  public DynamicItemSqlInterceptor(
+      boolean removeEnter, InsertAddSelectItemMode insertAddSelectItemMode,
+      boolean duplicateKeyUpdate, UpdateItemMode updateItemMode, DynamicItemRewriter dynamicItemRewriter) {
     super(removeEnter);
     if (dynamicItemRewriter == null) {
       throw new DynamicSQLException("`dynamicItemRewriter` can not be null!");
     }
+    this.defaultInsertAddSelectItemMode = insertAddSelectItemMode;
+    this.defaultDuplicateKeyUpdate = duplicateKeyUpdate;
+    this.defaultUpdateItemMode = updateItemMode;
     this.dynamicItemRewriter = dynamicItemRewriter;
   }
 
@@ -60,9 +68,12 @@ public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
       }
       String itemName = dynamicItemConfig.getItemName();
       Object itemValue = dynamicItemConfig.getItemValue();
-      InsertAddSelectItemMode insertAddSelectItemMode = dynamicItemConfig.getInsertAddSelectItemMode();
-      Boolean duplicateKeyUpdate = dynamicItemConfig.getDuplicateKeyUpdate();
-      UpdateItemMode updateItemMode = dynamicItemConfig.getUpdateItemMode();
+      InsertAddSelectItemMode insertAddSelectItemMode =
+          JdbcSQLUtils.getOrDefault(dynamicItemConfig.getInsertAddSelectItemMode(), defaultInsertAddSelectItemMode);
+      Boolean duplicateKeyUpdate =
+          JdbcSQLUtils.getOrDefault(dynamicItemConfig.getDuplicateKeyUpdate(), defaultDuplicateKeyUpdate);
+      UpdateItemMode updateItemMode =
+          JdbcSQLUtils.getOrDefault(dynamicItemConfig.getUpdateItemMode(), defaultUpdateItemMode);
 
       try {
         if (DynamicItemOperation.INSERT_ADD_ITEM == dynamicItemOperation) {
@@ -91,7 +102,7 @@ public class DynamicItemSqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public int order() {
-    return MAX / 2 - 61000;
+    return MAX / 2 - 62000;
   }
 
   @Override

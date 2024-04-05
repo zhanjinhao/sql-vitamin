@@ -29,4 +29,9 @@ public class DynamicConditionConfig {
     return new DynamicConditionConfig(dynamicConditionOperation, tableOrViewName, condition, joinUseSubQuery);
   }
 
+  public static DynamicConditionConfig of(
+      DynamicConditionOperation dynamicConditionOperation, String tableOrViewName, String condition) {
+    return new DynamicConditionConfig(dynamicConditionOperation, tableOrViewName, condition, null);
+  }
+
 }

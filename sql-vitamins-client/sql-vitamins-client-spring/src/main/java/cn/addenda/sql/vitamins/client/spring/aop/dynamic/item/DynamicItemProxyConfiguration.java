@@ -5,6 +5,8 @@ import cn.addenda.sql.vitamins.client.spring.aop.NamedConfigurer;
 import cn.addenda.sql.vitamins.rewriter.dynamic.DynamicSQLException;
 import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemSqlInterceptor;
 import cn.addenda.sql.vitamins.rewriter.dynamic.item.DynamicItemRewriter;
+import cn.addenda.sql.vitamins.rewriter.visitor.item.InsertAddSelectItemMode;
+import cn.addenda.sql.vitamins.rewriter.visitor.item.UpdateItemMode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class DynamicItemProxyConfiguration implements ImportAware {
 
   private int order;
   private boolean removeEnter;
+  private InsertAddSelectItemMode insertAddSelectItemMode;
+  private boolean duplicateKeyUpdate;
+  private UpdateItemMode updateItemMode;
   private DynamicItemRewriter dynamicItemRewriter;
 
   @Override
@@ -50,6 +55,9 @@ public class DynamicItemProxyConfiguration implements ImportAware {
 
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
+    this.insertAddSelectItemMode = annotationAttributes.getEnum("insertAddSelectItemMode");
+    this.duplicateKeyUpdate = annotationAttributes.getBoolean("duplicateKeyUpdate");
+    this.updateItemMode = annotationAttributes.getEnum("updateItemMode");
     return new DynamicItemBeanPostProcessor();
   }
 
@@ -84,7 +92,8 @@ public class DynamicItemProxyConfiguration implements ImportAware {
 
     @Override
     protected DynamicItemSqlInterceptor getSqlInterceptor() {
-      return new DynamicItemSqlInterceptor(removeEnter, dynamicItemRewriter);
+      return new DynamicItemSqlInterceptor(removeEnter,
+          insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode, dynamicItemRewriter);
     }
 
     @Override

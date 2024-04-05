@@ -31,7 +31,7 @@ public class DynamicSuffixSqlInterceptor extends AbstractSqlInterceptor {
     }
 
     logDebug("Dynamic Suffix, before sql: [{}].", sql);
-    sql = trim(sql) + " " + suffix;
+    sql = trim(sql) + " " + suffix + " ";
     logDebug("Dynamic Suffix, after sql: [{}].", sql);
     return sql;
   }
@@ -46,7 +46,7 @@ public class DynamicSuffixSqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public int order() {
-    return MAX / 2 - 80000;
+    return MAX / 2 - 63000;
   }
 
   @Override

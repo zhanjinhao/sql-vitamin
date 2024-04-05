@@ -1,6 +1,7 @@
 package cn.addenda.sql.vitamins.rewriter.sqlcheck;
 
 import cn.addenda.sql.vitamins.rewriter.AbstractSqlInterceptor;
+import cn.addenda.sql.vitamins.rewriter.baseentity.BaseEntityContext;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -40,22 +41,22 @@ public class SqlCheckSqlInterceptor extends AbstractSqlInterceptor {
 
   @Override
   public String rewrite(String sql) {
-    Boolean disable = JdbcSQLUtils.getOrDefault(SqlCheckContext.getDisable(), defaultDisable);
-    if (Boolean.TRUE.equals(disable)) {
-      return sql;
-    }
 
     logDebug("Sql Check - start: {}.", sql);
     if (!SqlCheckContext.contextActive()) {
-      try {
-        SqlCheckContext.push(new SqlCheckConfig());
-        sql = doRewrite(sql);
-      } finally {
-        SqlCheckContext.pop();
+      if (!defaultDisable) {
+        try {
+          SqlCheckContext.push(new SqlCheckConfig());
+          sql = doRewrite(sql);
+        } finally {
+          SqlCheckContext.pop();
+        }
       }
-      return sql;
     } else {
-      sql = doRewrite(sql);
+      Boolean disable = JdbcSQLUtils.getOrDefault(BaseEntityContext.getDisable(), defaultDisable);
+      if (Boolean.FALSE.equals(disable)) {
+        sql = doRewrite(sql);
+      }
     }
     logDebug("Sql Check - end: {}.", sql);
 
