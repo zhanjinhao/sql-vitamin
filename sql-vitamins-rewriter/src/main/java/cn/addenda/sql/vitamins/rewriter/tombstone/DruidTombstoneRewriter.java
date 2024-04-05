@@ -32,6 +32,9 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
   private static final Integer TOMBSTONE_VALUE = 1;
   private static final String NON_TOMBSTONE = TOMBSTONE_NAME + "=" + NON_TOMBSTONE_VALUE;
   private static final String TOMBSTONE = TOMBSTONE_NAME + "=" + TOMBSTONE_VALUE;
+  private static final String DELETE_TIME_NAME = "delete_time";
+  private static final String DELETE_TIME_VALUE = "now(3)";
+  private static final String DELETE_TIME = DELETE_TIME_NAME + "=" + DELETE_TIME_VALUE;
   private static final Item TOMBSTONE_ITEM = new Item(TOMBSTONE_NAME, NON_TOMBSTONE_VALUE);
 
   /**
@@ -88,11 +91,12 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
   }
 
   @Override
-  public String rewriteDeleteSql(String sql) {
-    return DruidSQLUtils.statementMerge(sql, this::doRewriteDeleteSql);
+  public String rewriteDeleteSql(String sql, boolean includeDeleteTime) {
+    return DruidSQLUtils.statementMerge(sql,
+        sqlStatement -> doRewriteDeleteSql(sqlStatement, includeDeleteTime));
   }
 
-  private String doRewriteDeleteSql(SQLStatement sqlStatement) {
+  private String doRewriteDeleteSql(SQLStatement sqlStatement, boolean includeDeleteTime) {
     doRewriteSql(sqlStatement, sql -> {
       // delete from A where ... and if_del = 0
       // false: delete 语句是单表
@@ -105,7 +109,9 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
     }
     SQLExpr where = mySqlDeleteStatement.getWhere();
     // update A set if_del = 1 where ... and if_del = 0
-    return "update " + mySqlDeleteStatement.getTableName() + " set " + TOMBSTONE + " where " + DruidSQLUtils.toLowerCaseSQL(where);
+    return "update " + mySqlDeleteStatement.getTableName() + " set " + TOMBSTONE +
+        (includeDeleteTime ? " , " + DELETE_TIME : "") +
+        " where " + DruidSQLUtils.toLowerCaseSQL(where);
   }
 
   @Override

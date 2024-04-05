@@ -33,6 +33,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
   private TombstoneRewriter tombstoneRewriter;
   private boolean disable;
   private boolean joinUseSubQuery;
+  private boolean includeDeleteTime;
 
   @Override
   public void setImportMetadata(AnnotationMetadata importMetadata) {
@@ -53,6 +54,7 @@ public class TombstoneProxyConfiguration implements ImportAware {
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
     this.disable = annotationAttributes.getBoolean("disable");
     this.joinUseSubQuery = annotationAttributes.getBoolean("joinUseSubQuery");
+    this.includeDeleteTime = annotationAttributes.getBoolean("includeDeleteTime");
     return new TombstoneBeanPostProcessor();
   }
 
@@ -87,7 +89,8 @@ public class TombstoneProxyConfiguration implements ImportAware {
 
     @Override
     protected TombstoneSqlInterceptor getSqlInterceptor() {
-      return new TombstoneSqlInterceptor(removeEnter, tombstoneRewriter, disable, joinUseSubQuery);
+      return new TombstoneSqlInterceptor(removeEnter, tombstoneRewriter,
+          disable, joinUseSubQuery, includeDeleteTime);
     }
 
     @Override

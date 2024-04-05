@@ -27,6 +27,11 @@ public class TombstoneConfigUtils {
       Propagation.configWithPropagation(propagation, joinUseSubQuery,
           TombstoneContext::setJoinUseSubQuery, TombstoneContext::getJoinUseSubQuery);
     }
+    Boolean includeDeleteTime = tombstoneConfig.getIncludeDeleteTime();
+    if (includeDeleteTime != null) {
+      Propagation.configWithPropagation(propagation, includeDeleteTime,
+          TombstoneContext::setIncludeDeleteTime, TombstoneContext::getIncludeDeleteTime);
+    }
   }
 
   public static void configTombstone(ConfigTombstone configTombstone) {
@@ -34,7 +39,8 @@ public class TombstoneConfigUtils {
     configTombstone(propagation,
         TombstoneConfig.of(
             BoolConfig.toBoolean(configTombstone.disable()),
-            BoolConfig.toBoolean(configTombstone.joinUseSubQuery())));
+            BoolConfig.toBoolean(configTombstone.joinUseSubQuery()),
+            BoolConfig.toBoolean(configTombstone.includeDeleteTime())));
   }
 
   public static void pushTombstone(Propagation propagation) {

@@ -20,4 +20,6 @@ public @interface ConfigTombstone {
 
   BoolConfig joinUseSubQuery() default BoolConfig.DEFAULT;
 
+  BoolConfig includeDeleteTime() default BoolConfig.DEFAULT;
+
 }

@@ -13,13 +13,16 @@ public class TombstoneConfig {
 
   private Boolean joinUseSubQuery;
 
+  private Boolean includeDeleteTime;
+
   public TombstoneConfig(TombstoneConfig tombstoneConfig) {
     this.disable = tombstoneConfig.disable;
     this.joinUseSubQuery = tombstoneConfig.joinUseSubQuery;
+    this.includeDeleteTime = tombstoneConfig.includeDeleteTime;
   }
 
-  public static TombstoneConfig of(Boolean disable, Boolean joinUseSubQuery) {
-    return new TombstoneConfig(disable, joinUseSubQuery);
+  public static TombstoneConfig of(Boolean disable, Boolean joinUseSubQuery, Boolean includeDeleteTime) {
+    return new TombstoneConfig(disable, joinUseSubQuery, includeDeleteTime);
   }
 
 }

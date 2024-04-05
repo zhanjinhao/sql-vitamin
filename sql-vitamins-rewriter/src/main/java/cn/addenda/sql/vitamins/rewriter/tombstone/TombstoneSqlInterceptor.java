@@ -18,16 +18,18 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
   private final TombstoneRewriter tombstoneRewriter;
   private final boolean defaultDisable;
   private final boolean defaultJoinUseSubQuery;
+  private final boolean defaultIncludeDeleteTime;
 
   public TombstoneSqlInterceptor(
       boolean removeEnter, TombstoneRewriter tombstoneRewriter,
-      boolean defaultDisable, boolean joinUseSubQuery) {
+      boolean defaultDisable, boolean includeDeleteTime, boolean joinUseSubQuery) {
     super(removeEnter);
     if (tombstoneRewriter == null) {
       throw new TombstoneException("`tombstoneRewriter` can not be null!");
     }
     this.tombstoneRewriter = tombstoneRewriter;
     this.defaultDisable = defaultDisable;
+    this.defaultIncludeDeleteTime = includeDeleteTime;
     this.defaultJoinUseSubQuery = joinUseSubQuery;
   }
 
@@ -58,7 +60,9 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
     String newSql = sql;
     try {
       if (JdbcSQLUtils.isDelete(newSql)) {
-        newSql = tombstoneRewriter.rewriteDeleteSql(newSql);
+        Boolean includeDeleteTime =
+            JdbcSQLUtils.getOrDefault(TombstoneContext.getIncludeDeleteTime(), defaultIncludeDeleteTime);
+        newSql = tombstoneRewriter.rewriteDeleteSql(newSql, includeDeleteTime);
       } else if (JdbcSQLUtils.isSelect(newSql)) {
         Boolean useSubQuery =
             JdbcSQLUtils.getOrDefault(TombstoneContext.getJoinUseSubQuery(), defaultJoinUseSubQuery);

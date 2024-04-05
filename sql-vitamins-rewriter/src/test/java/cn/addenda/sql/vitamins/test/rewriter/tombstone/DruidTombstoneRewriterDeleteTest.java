@@ -33,7 +33,7 @@ public class DruidTombstoneRewriterDeleteTest {
       }
       System.out.println("------------------------------------------------------------------------------------");
       DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter();
-      String s = druidTombstoneRewriter.rewriteDeleteSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)));
+      String s = druidTombstoneRewriter.rewriteDeleteSql(DruidSQLUtils.toLowerCaseSQL(sqlStatements.get(0)), false);
       sqlStatements = SQLUtils.parseStatements(s, DbType.mysql);
       List<SQLStatement> expectSqlStatements = SQLUtils.parseStatements(expect, DbType.mysql);
       Assert.assertEquals(DruidSQLUtils.toLowerCaseSQL(expectSqlStatements.get(0)).replaceAll("\\s+", ""),

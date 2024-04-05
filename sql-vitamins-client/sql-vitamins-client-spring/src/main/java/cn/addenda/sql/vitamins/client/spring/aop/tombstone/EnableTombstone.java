@@ -29,4 +29,6 @@ public @interface EnableTombstone {
 
   boolean joinUseSubQuery() default false;
 
+  boolean includeDeleteTime() default false;
+
 }

@@ -119,7 +119,7 @@ public class SpringDynamicConditionTest {
 
   @SneakyThrows
   private User forceQuery() {
-    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null),
+    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null),
         new Supplier<User>() {
           @Override
           @SneakyThrows

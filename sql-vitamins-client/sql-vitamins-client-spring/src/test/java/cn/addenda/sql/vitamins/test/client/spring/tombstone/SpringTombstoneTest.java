@@ -15,6 +15,8 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -74,26 +76,33 @@ public class SpringTombstoneTest {
     Assert.assertNotNull(user4.getRemark());
     Assert.assertNotNull(user4.getIfDel());
     Assert.assertEquals(1, user4.getIfDel().intValue());
+    Assert.assertNotNull(user4.getDeleteTime());
   }
 
   @SneakyThrows
   private void delete(int id) {
-    try (Connection connection = dataSource.getConnection();
-         PreparedStatement preparedStatement = connection.prepareStatement("delete from users where id = ?")) {
-      preparedStatement.setInt(1, id);
-      preparedStatement.executeUpdate();
-    }
+    TombstoneUtils.tombstone(TombstoneConfig.of(null, null, true), new Runnable() {
+      @Override
+      @SneakyThrows
+      public void run() {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("delete from users where id = ?")) {
+          preparedStatement.setInt(1, id);
+          preparedStatement.executeUpdate();
+        }
+      }
+    });
   }
 
   @SneakyThrows
   private User forceQuery() {
-    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null),
+    return TombstoneUtils.tombstone(TombstoneConfig.of(true, null, null),
         new Supplier<User>() {
           @Override
           @SneakyThrows
           public User get() {
             try (Connection connection = dataSource.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name, if_del FROM users");
+                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name, if_del, delete_time FROM users");
                  ResultSet resultSet = preparedStatement.executeQuery()) {
 
               User user = new User();
@@ -108,7 +117,9 @@ public class SpringTombstoneTest {
                 user.setModifyTime(resultSet.getTimestamp("modify_time").toLocalDateTime());
                 user.setRemark(resultSet.getString("remark"));
                 user.setIfDel(resultSet.getInt("if_del"));
-              }
+                user.setDeleteTime(
+                    Optional.ofNullable(resultSet.getTimestamp("delete_time"))
+                        .map(Timestamp::toLocalDateTime).orElse(null));              }
               return user;
             }
           }
@@ -128,6 +139,7 @@ public class SpringTombstoneTest {
           "        primary key,\n" +
           "    name     varchar(20) not null,\n" +
           "    if_del        tinyint     null,\n" +
+          "    delete_time        datetime(3)     null,\n" +
           "    creator       varchar(10) null,\n" +
           "    creator_name  varchar(10) null,\n" +
           "    create_time   datetime(3) null,\n" +
@@ -175,7 +187,7 @@ public class SpringTombstoneTest {
   @SneakyThrows
   public User getAllUsers() {
     try (Connection connection = dataSource.getConnection();
-         PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name, if_del FROM users");
+         PreparedStatement preparedStatement = connection.prepareStatement("SELECT id, name, if_del, delete_time FROM users");
          ResultSet resultSet = preparedStatement.executeQuery()) {
 
       User user = null;
@@ -191,6 +203,9 @@ public class SpringTombstoneTest {
         user.setModifyTime(resultSet.getTimestamp("modify_time").toLocalDateTime());
         user.setRemark(resultSet.getString("remark"));
         user.setIfDel(resultSet.getInt("if_del"));
+        user.setDeleteTime(
+            Optional.ofNullable(resultSet.getTimestamp("delete_time"))
+                .map(Timestamp::toLocalDateTime).orElse(null));
       }
       return user;
     }

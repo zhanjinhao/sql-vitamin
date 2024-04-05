@@ -41,7 +41,7 @@ public class DruidTombstoneRewriterShowCaseTest {
   public void testInsert3() {
     DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter();
     String sql = "insert into t_cdc_test(long_d, int_d, string_d, date_d, time_d, datetime_d, float_d, double_d) "
-      + "values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?)";
+        + "values (? + 1, ?, replace(?,'a','b'), date_add(?, interval 1 day), ?, now(), ?, ?)";
 
     String s = druidTombstoneRewriter.rewriteInsertSql(sql, false);
 
@@ -78,9 +78,9 @@ public class DruidTombstoneRewriterShowCaseTest {
   public void testUpdate3() {
     DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter();
     String sql = "update t_idempotent_storage_center A inner join ("
-      + "           select id from t_idempotent_storage_center "
-      + "           where `namespace` = ? and `prefix` = ? and `key` = ? and `consume_mode` = ? order by id desc limit 1) B on B.id = A.id "
-      + "           set A.`consume_status` = 'EXCEPTION'";
+        + "           select id from t_idempotent_storage_center "
+        + "           where `namespace` = ? and `prefix` = ? and `key` = ? and `consume_mode` = ? order by id desc limit 1) B on B.id = A.id "
+        + "           set A.`consume_status` = 'EXCEPTION'";
 
     String s = druidTombstoneRewriter.rewriteUpdateSql(sql);
 
@@ -103,7 +103,7 @@ public class DruidTombstoneRewriterShowCaseTest {
     DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter();
     String sql = "delete from A where id in (1, 2, 3)";
 
-    String s = druidTombstoneRewriter.rewriteDeleteSql(sql);
+    String s = druidTombstoneRewriter.rewriteDeleteSql(sql, false);
 
     //  update A set if_del=1 where id in (1, 2, 3) and A.if_del = 0
     log.info(s);
@@ -177,7 +177,7 @@ public class DruidTombstoneRewriterShowCaseTest {
   public void testSelect6() {
     DruidTombstoneRewriter druidTombstoneRewriter = new DruidTombstoneRewriter(null, null, new DefaultDataConvertorRegistry());
     String sql = "  select a , b from tab2 t left join tab3 on tab2.c = tab3.c and tab2.d = tab2.c, (select * from tab5) t5 "
-      + "where t.m  = ?  and  exists  (  select 1 from tab4  t4  where t1.n  = t4.n   )   and t.tm  >= '2016-11-11'";
+        + "where t.m  = ?  and  exists  (  select 1 from tab4  t4  where t1.n  = t4.n   )   and t.tm  >= '2016-11-11'";
     String s = druidTombstoneRewriter.rewriteSelectSql(sql, false);
 
     //   select a, b from tab2 t
