@@ -15,15 +15,14 @@ import java.util.List;
  */
 public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
 
-  // todo excluded
-  private final List<String> notIncluded;
+  private final List<String> excluded;
 
   public DruidDynamicConditionRewriter() {
-    this.notIncluded = null;
+    this.excluded = null;
   }
 
-  public DruidDynamicConditionRewriter(List<String> notIncluded) {
-    this.notIncluded = notIncluded;
+  public DruidDynamicConditionRewriter(List<String> excluded) {
+    this.excluded = excluded;
   }
 
   @Override
@@ -31,7 +30,7 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
       String sql, String tableOrViewName, String condition, boolean useSubQuery) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new TableAddJoinConditionVisitor(
-          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded,
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), excluded,
           condition, useSubQuery, true));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
@@ -42,7 +41,7 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
       String sql, String tableOrViewName, String condition, boolean useSubQuery) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new ViewAddJoinConditionVisitor(
-          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded,
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), excluded,
           condition, useSubQuery, true));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
@@ -52,7 +51,7 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
   public String tableAddWhereCondition(String sql, String tableOrViewName, String condition) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new TableAddWhereConditionVisitor(
-          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded, condition));
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), excluded, condition));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
   }
@@ -61,7 +60,7 @@ public class DruidDynamicConditionRewriter implements DynamicConditionRewriter {
   public String viewAddWhereCondition(String sql, String tableOrViewName, String condition) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       sqlStatement.accept(new ViewAddWhereConditionVisitor(
-          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), notIncluded, condition));
+          tableOrViewName == null ? null : ArrayUtils.asArrayList(tableOrViewName), excluded, condition));
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
   }

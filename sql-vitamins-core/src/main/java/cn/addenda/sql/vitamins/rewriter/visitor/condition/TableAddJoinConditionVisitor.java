@@ -45,8 +45,8 @@ public class TableAddJoinConditionVisitor extends AbstractAddConditionVisitor {
   }
 
   public TableAddJoinConditionVisitor(
-      List<String> included, List<String> notIncluded, String condition, boolean joinUseSubQuery, boolean rewriteCommaToJoin) {
-    super(included, notIncluded, condition);
+      List<String> included, List<String> excluded, String condition, boolean joinUseSubQuery, boolean rewriteCommaToJoin) {
+    super(included, excluded, condition);
     this.joinUseSubQuery = joinUseSubQuery;
     this.rewriteCommaToJoin = rewriteCommaToJoin;
   }

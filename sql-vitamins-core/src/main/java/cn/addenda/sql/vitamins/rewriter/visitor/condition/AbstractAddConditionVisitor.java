@@ -1,6 +1,5 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.condition;
 
-import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import com.alibaba.druid.DbType;
@@ -27,16 +26,16 @@ import java.util.List;
 public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter {
 
   protected final List<String> included;
-  protected final List<String> notIncluded;
+  protected final List<String> excluded;
 
   protected final String condition;
 
   protected static final String TABLE_NAME_KEY = "tableNameKey";
   protected static final String ALIAS_KEY = "aliasKey";
 
-  protected AbstractAddConditionVisitor(List<String> included, List<String> notIncluded, String condition) {
+  protected AbstractAddConditionVisitor(List<String> included, List<String> excluded, String condition) {
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
     this.condition = condition;
   }
 
@@ -44,7 +43,7 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
   public void endVisit(SQLExprTableSource x) {
     String aAlias = x.getAlias();
     String aTableName = x.getTableName();
-    if (!JdbcSQLUtils.include(determineTableName(aTableName, aAlias), included, notIncluded)) {
+    if (!JdbcSQLUtils.include(determineTableName(aTableName, aAlias), included, excluded)) {
       return;
     }
     addTableName(x, aTableName);
@@ -69,7 +68,7 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
   protected SQLTableSource newFrom(String tableName, String alias) {
     String view = alias == null ? tableName : alias;
     SQLSelectStatement sqlStatement = (SQLSelectStatement) SQLUtils.parseSingleStatement(
-      "select * from (select * from " + tableName + " where " + condition + ")", DbType.mysql);
+        "select * from (select * from " + tableName + " where " + condition + ")", DbType.mysql);
     SQLTableSource from = ((SQLSelectQueryBlock) sqlStatement.getSelect().getQuery()).getFrom();
     from.setAlias(view);
     return from;
@@ -78,7 +77,7 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
   protected SQLExpr newWhere(SQLExpr where, String tableName, String alias) {
     String view = alias == null ? tableName : alias;
     return SQLUtils.buildCondition(SQLBinaryOperator.BooleanAnd,
-      SQLUtils.toSQLExpr(view + "." + condition, DbType.mysql), false, where);
+        SQLUtils.toSQLExpr(view + "." + condition, DbType.mysql), false, where);
   }
 
   protected String getTableName(SQLObject sqlObject) {
@@ -136,36 +135,36 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
   protected void logWhereChange(SQLObject x, SQLObject before, SQLObject after) {
     if (log.isDebugEnabled()) {
       log.debug("SQLObject: [{}]，where before：[{}]，where after：[{}]。",
-        DruidSQLUtils.toLowerCaseSQL(x),
-        DruidSQLUtils.toLowerCaseSQL(before),
-        DruidSQLUtils.toLowerCaseSQL(after));
+          DruidSQLUtils.toLowerCaseSQL(x),
+          DruidSQLUtils.toLowerCaseSQL(before),
+          DruidSQLUtils.toLowerCaseSQL(after));
     }
   }
 
   protected void logTableSourceChange(SQLObject x, SQLObject before, SQLObject after) {
     if (log.isDebugEnabled()) {
       log.debug("SQLObject: [{}]. TableSource before: [{}]; TableSource after: [{}].",
-        DruidSQLUtils.toLowerCaseSQL(x),
-        DruidSQLUtils.toLowerCaseSQL(before),
-        DruidSQLUtils.toLowerCaseSQL(after));
+          DruidSQLUtils.toLowerCaseSQL(x),
+          DruidSQLUtils.toLowerCaseSQL(before),
+          DruidSQLUtils.toLowerCaseSQL(after));
     }
   }
 
   protected void logJoinConditionChange(SQLObject x, SQLObject before, SQLObject after) {
     if (log.isDebugEnabled()) {
       log.debug("SQLObject: [{}]. JoinCondition before: [{}]; JoinCondition after: [{}].",
-        DruidSQLUtils.toLowerCaseSQL(x),
-        DruidSQLUtils.toLowerCaseSQL(before),
-        DruidSQLUtils.toLowerCaseSQL(after));
+          DruidSQLUtils.toLowerCaseSQL(x),
+          DruidSQLUtils.toLowerCaseSQL(before),
+          DruidSQLUtils.toLowerCaseSQL(after));
     }
   }
 
   @Override
   public String toString() {
     return "AbstractAddConditionVisitor{" +
-      "included=" + included +
-      ", notIncluded=" + notIncluded +
-      ", condition='" + condition + '\'' +
-      "} " + super.toString();
+        "included=" + included +
+        ", excluded=" + excluded +
+        ", condition='" + condition + '\'' +
+        "} " + super.toString();
   }
 }

@@ -30,8 +30,8 @@ public class DynamicItemRewriterConfigurer implements NamedConfigurer {
     this.dynamicItemRewriter = dynamicItemRewriter;
   }
 
-  public DynamicItemRewriterConfigurer(List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
-    this.dynamicItemRewriter = new DruidDynamicItemRewriter(notIncluded, dataConvertorRegistry);
+  public DynamicItemRewriterConfigurer(List<String> excluded, DataConvertorRegistry dataConvertorRegistry) {
+    this.dynamicItemRewriter = new DruidDynamicItemRewriter(excluded, dataConvertorRegistry);
   }
 
 }

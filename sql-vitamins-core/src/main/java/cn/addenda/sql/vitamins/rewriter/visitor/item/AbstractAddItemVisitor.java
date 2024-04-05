@@ -25,18 +25,18 @@ public abstract class AbstractAddItemVisitor<T extends SQLStatement> extends Sql
 
   protected final List<String> included;
 
-  protected final List<String> notIncluded;
+  protected final List<String> excluded;
 
-  protected AbstractAddItemVisitor(String sql, List<String> included, List<String> notIncluded) {
+  protected AbstractAddItemVisitor(String sql, List<String> included, List<String> excluded) {
     super(sql);
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
   }
 
-  protected AbstractAddItemVisitor(T sqlStatement, List<String> included, List<String> notIncluded) {
+  protected AbstractAddItemVisitor(T sqlStatement, List<String> included, List<String> excluded) {
     super(sqlStatement);
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
   }
 
   @Override
@@ -68,7 +68,7 @@ public abstract class AbstractAddItemVisitor<T extends SQLStatement> extends Sql
   public String toString() {
     return "AbstractAddItemVisitor{" +
         ", included=" + included +
-        ", notIncluded=" + notIncluded +
+        ", excluded=" + excluded +
         "} " + super.toString();
   }
 }

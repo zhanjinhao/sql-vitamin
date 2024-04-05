@@ -29,8 +29,8 @@ public class TableAddWhereConditionVisitor extends AbstractAddConditionVisitor {
   }
 
   public TableAddWhereConditionVisitor(
-    List<String> included, List<String> notIncluded, String condition) {
-    super(included, notIncluded, condition);
+    List<String> included, List<String> excluded, String condition) {
+    super(included, excluded, condition);
   }
 
   @Override

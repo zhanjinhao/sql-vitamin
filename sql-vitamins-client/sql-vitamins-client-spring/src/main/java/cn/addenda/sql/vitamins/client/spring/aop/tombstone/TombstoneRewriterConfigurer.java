@@ -21,8 +21,8 @@ public class TombstoneRewriterConfigurer implements NamedConfigurer {
     this.tombstoneRewriter = new DruidTombstoneRewriter();
   }
 
-  public TombstoneRewriterConfigurer(List<String> included, List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
-    this.tombstoneRewriter = new DruidTombstoneRewriter(included, notIncluded, dataConvertorRegistry);
+  public TombstoneRewriterConfigurer(List<String> included, List<String> excluded, DataConvertorRegistry dataConvertorRegistry) {
+    this.tombstoneRewriter = new DruidTombstoneRewriter(included, excluded, dataConvertorRegistry);
   }
 
   public TombstoneRewriterConfigurer(TombstoneRewriter tombstoneRewriter) {

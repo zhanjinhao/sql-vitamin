@@ -20,8 +20,8 @@ public class DynamicConditionRewriterConfigurer implements NamedConfigurer {
     this.dynamicConditionRewriter = new DruidDynamicConditionRewriter();
   }
 
-  public DynamicConditionRewriterConfigurer(List<String> notIncluded) {
-    this.dynamicConditionRewriter = new DruidDynamicConditionRewriter(notIncluded);
+  public DynamicConditionRewriterConfigurer(List<String> excluded) {
+    this.dynamicConditionRewriter = new DruidDynamicConditionRewriter(excluded);
   }
 
   public DynamicConditionRewriterConfigurer(DynamicConditionRewriter dynamicConditionRewriter) {

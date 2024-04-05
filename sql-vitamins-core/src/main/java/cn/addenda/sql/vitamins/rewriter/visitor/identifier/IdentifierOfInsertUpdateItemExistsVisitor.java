@@ -22,14 +22,14 @@ public class IdentifierOfInsertUpdateItemExistsVisitor extends IdentifierExistsV
 
   public IdentifierOfInsertUpdateItemExistsVisitor(
     String sql, String identifier,
-    List<String> included, List<String> notIncluded) {
-    super(sql, identifier, included, notIncluded);
+    List<String> included, List<String> excluded) {
+    super(sql, identifier, included, excluded);
   }
 
   public IdentifierOfInsertUpdateItemExistsVisitor(
     SQLStatement sql, String identifier,
-    List<String> included, List<String> notIncluded) {
-    super(sql, identifier, included, notIncluded);
+    List<String> included, List<String> excluded) {
+    super(sql, identifier, included, excluded);
   }
 
   public IdentifierOfInsertUpdateItemExistsVisitor(String sql, String identifier) {

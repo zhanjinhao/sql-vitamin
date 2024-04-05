@@ -48,10 +48,10 @@ public class AddUpdateItemVisitor extends AbstractAddItemVisitor<MySqlUpdateStat
   }
 
   public AddUpdateItemVisitor(
-      String sql, List<String> included, List<String> notIncluded,
+      String sql, List<String> included, List<String> excluded,
       DataConvertorRegistry dataConvertorRegistry, boolean reportItemNameExists,
       Item item, UpdateItemMode updateItemMode) {
-    super(sql, included, notIncluded);
+    super(sql, included, excluded);
     this.dataConvertorRegistry = dataConvertorRegistry;
     this.reportItemNameExists = reportItemNameExists;
     this.item = item;
@@ -65,10 +65,10 @@ public class AddUpdateItemVisitor extends AbstractAddItemVisitor<MySqlUpdateStat
   }
 
   public AddUpdateItemVisitor(
-      MySqlUpdateStatement sql, List<String> included, List<String> notIncluded,
+      MySqlUpdateStatement sql, List<String> included, List<String> excluded,
       DataConvertorRegistry dataConvertorRegistry, boolean reportItemNameExists,
       Item item, UpdateItemMode updateItemMode) {
-    super(sql, included, notIncluded);
+    super(sql, included, excluded);
     this.dataConvertorRegistry = dataConvertorRegistry;
     this.reportItemNameExists = reportItemNameExists;
     this.item = item;
@@ -89,7 +89,7 @@ public class AddUpdateItemVisitor extends AbstractAddItemVisitor<MySqlUpdateStat
     boolean prefix = viewToTableMap.size() != 1;
     List<Item> itemList = new ArrayList<>();
     viewToTableMap.forEach((view, table) -> {
-      if (table != null && JdbcSQLUtils.include(table, included, notIncluded)) {
+      if (table != null && JdbcSQLUtils.include(table, included, excluded)) {
         if (UpdateItemMode.ALL == updateItemMode) {
           itemList.add(addItem(x, view, prefix, sqlUpdateSetItemList));
         } else if (UpdateItemMode.NOT_NULL == updateItemMode) {

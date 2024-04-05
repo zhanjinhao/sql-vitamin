@@ -54,11 +54,11 @@ public class AddInsertItemVisitor extends AbstractAddItemVisitor<MySqlInsertStat
   }
 
   public AddInsertItemVisitor(
-      String sql, List<String> included, List<String> notIncluded,
+      String sql, List<String> included, List<String> excluded,
       DataConvertorRegistry dataConvertorRegistry, boolean reportItemNameExists,
       Item item, InsertAddSelectItemMode insertAddSelectItemMode,
       boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
-    super(sql, included, notIncluded);
+    super(sql, included, excluded);
     this.dataConvertorRegistry = dataConvertorRegistry;
     this.reportItemNameExists = reportItemNameExists;
     this.item = item;
@@ -74,11 +74,11 @@ public class AddInsertItemVisitor extends AbstractAddItemVisitor<MySqlInsertStat
   }
 
   public AddInsertItemVisitor(
-      MySqlInsertStatement sql, List<String> included, List<String> notIncluded,
+      MySqlInsertStatement sql, List<String> included, List<String> excluded,
       DataConvertorRegistry dataConvertorRegistry, boolean reportItemNameExists,
       Item item, InsertAddSelectItemMode insertAddSelectItemMode,
       boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
-    super(sql, included, notIncluded);
+    super(sql, included, excluded);
     this.dataConvertorRegistry = dataConvertorRegistry;
     this.reportItemNameExists = reportItemNameExists;
     this.item = item;
@@ -104,7 +104,7 @@ public class AddInsertItemVisitor extends AbstractAddItemVisitor<MySqlInsertStat
       throw new SqlVitaminsException(msg);
     }
 
-    if (!JdbcSQLUtils.include(table, included, notIncluded)) {
+    if (!JdbcSQLUtils.include(table, included, excluded)) {
       return;
     }
 
@@ -158,7 +158,7 @@ public class AddInsertItemVisitor extends AbstractAddItemVisitor<MySqlInsertStat
       if (insertAddSelectItemMode == InsertAddSelectItemMode.DB) {
         SQLSelectStatement sqlSelectStatement = wrapSQLSelectQuery(mySqlSelectQueryBlock);
         AddSelectItemVisitor visitor = new AddSelectItemVisitor(
-            sqlSelectStatement, included, notIncluded, false, null, item.getItemName());
+            sqlSelectStatement, included, excluded, false, null, item.getItemName());
         visitor.visit();
         String resultItemName = visitor.getResult();
         if (resultItemName == null) {

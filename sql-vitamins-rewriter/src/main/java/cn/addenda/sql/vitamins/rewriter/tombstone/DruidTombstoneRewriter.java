@@ -42,13 +42,13 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
   /**
    * 非逻辑删除的表
    */
-  private final List<String> notIncluded;
+  private final List<String> excluded;
 
   private final DataConvertorRegistry dataConvertorRegistry;
 
-  public DruidTombstoneRewriter(List<String> included, List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
+  public DruidTombstoneRewriter(List<String> included, List<String> excluded, DataConvertorRegistry dataConvertorRegistry) {
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
@@ -78,11 +78,11 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
 
       //  UpdateItemMode.ALL：固定为0，不可能为空
       new AddInsertItemVisitor(
-          insertStatement, included, notIncluded,
+          insertStatement, included, excluded,
           dataConvertorRegistry, true, TOMBSTONE_ITEM,
           InsertAddSelectItemMode.VALUE, false, UpdateItemMode.ALL).visit();
       // 处理 insert A (...) select ... from B
-      sql.accept(new TableAddJoinConditionVisitor(included, notIncluded, NON_TOMBSTONE, useSubQuery, true));
+      sql.accept(new TableAddJoinConditionVisitor(included, excluded, NON_TOMBSTONE, useSubQuery, true));
     });
     return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
   }
@@ -96,11 +96,11 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
     doRewriteSql(sqlStatement, sql -> {
       // delete from A where ... and if_del = 0
       // false: delete 语句是单表
-      sql.accept(new TableAddJoinConditionVisitor(included, notIncluded, NON_TOMBSTONE, false, true));
+      sql.accept(new TableAddJoinConditionVisitor(included, excluded, NON_TOMBSTONE, false, true));
     });
     MySqlDeleteStatement mySqlDeleteStatement = (MySqlDeleteStatement) sqlStatement;
     SQLName tableName = mySqlDeleteStatement.getTableName();
-    if (!JdbcSQLUtils.include(tableName.toString(), included, notIncluded)) {
+    if (!JdbcSQLUtils.include(tableName.toString(), included, excluded)) {
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     }
     SQLExpr where = mySqlDeleteStatement.getWhere();
@@ -119,7 +119,7 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
   private String doRewriteSelectSql(SQLStatement sqlStatement, boolean useSubQuery) {
     doRewriteSql(sqlStatement, sql -> {
       // select a from A where ... and if_del = 0
-      sql.accept(new TableAddJoinConditionVisitor(included, notIncluded, NON_TOMBSTONE, useSubQuery, true));
+      sql.accept(new TableAddJoinConditionVisitor(included, excluded, NON_TOMBSTONE, useSubQuery, true));
     });
     return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
   }
@@ -135,14 +135,14 @@ public class DruidTombstoneRewriter implements TombstoneRewriter {
   private String doRewriteUpdateSql(SQLStatement sqlStatement) {
     doRewriteSql(sqlStatement, sql -> {
       // update A set ... where ... and if_del = 0
-      sql.accept(new TableAddJoinConditionVisitor(included, notIncluded, NON_TOMBSTONE, false, true));
+      sql.accept(new TableAddJoinConditionVisitor(included, excluded, NON_TOMBSTONE, false, true));
     });
     return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
   }
 
   private void doRewriteSql(SQLStatement sqlStatement, Consumer<SQLStatement> consumer) {
     IdentifierExistsVisitor identifierExistsVisitor = new IdentifierExistsVisitor(
-        sqlStatement, TOMBSTONE_NAME, included, notIncluded);
+        sqlStatement, TOMBSTONE_NAME, included, excluded);
     if (identifierExistsVisitor.isExists()) {
       String msg = String.format("使用逻辑删除的表不能使用[%s]字段，SQL：[%s]。", TOMBSTONE_NAME, DruidSQLUtils.toLowerCaseSQL(sqlStatement));
       throw new TombstoneException(msg);

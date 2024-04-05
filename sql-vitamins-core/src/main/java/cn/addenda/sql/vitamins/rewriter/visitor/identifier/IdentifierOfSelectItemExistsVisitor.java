@@ -21,13 +21,13 @@ public class IdentifierOfSelectItemExistsVisitor extends IdentifierExistsVisitor
   private final Deque<Boolean> flagStack = new ArrayDeque<>();
 
   public IdentifierOfSelectItemExistsVisitor(
-    String sql, String identifier, List<String> included, List<String> notIncluded) {
-    super(sql, identifier, included, notIncluded);
+    String sql, String identifier, List<String> included, List<String> excluded) {
+    super(sql, identifier, included, excluded);
   }
 
   public IdentifierOfSelectItemExistsVisitor(
-    SQLStatement sql, String identifier, List<String> included, List<String> notIncluded) {
-    super(sql, identifier, included, notIncluded);
+    SQLStatement sql, String identifier, List<String> included, List<String> excluded) {
+    super(sql, identifier, included, excluded);
   }
 
   public IdentifierOfSelectItemExistsVisitor(String sql, String identifier) {

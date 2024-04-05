@@ -18,8 +18,8 @@ public class ViewAddWhereConditionVisitor extends TableAddWhereConditionVisitor 
     super(tableName, condition);
   }
 
-  public ViewAddWhereConditionVisitor(List<String> included, List<String> notIncluded, String condition) {
-    super(included, notIncluded, condition);
+  public ViewAddWhereConditionVisitor(List<String> included, List<String> excluded, String condition) {
+    super(included, excluded, condition);
   }
 
   @Override

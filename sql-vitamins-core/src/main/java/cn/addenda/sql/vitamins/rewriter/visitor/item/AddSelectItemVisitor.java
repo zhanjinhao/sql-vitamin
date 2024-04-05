@@ -42,9 +42,9 @@ public class AddSelectItemVisitor extends AbstractAddItemVisitor<SQLSelectStatem
   private final String itemName;
 
   public AddSelectItemVisitor(
-      String sql, List<String> included, List<String> notIncluded,
+      String sql, List<String> included, List<String> excluded,
       boolean reportItemNameExists, String masterView, String itemName) {
-    super(sql, included, notIncluded);
+    super(sql, included, excluded);
     this.reportItemNameExists = reportItemNameExists;
     this.masterView = masterView;
     this.itemName = itemName;
@@ -55,9 +55,9 @@ public class AddSelectItemVisitor extends AbstractAddItemVisitor<SQLSelectStatem
   }
 
   public AddSelectItemVisitor(
-      SQLSelectStatement sqlSelectStatement, List<String> included, List<String> notIncluded,
+      SQLSelectStatement sqlSelectStatement, List<String> included, List<String> excluded,
       boolean reportItemNameExists, String masterView, String itemName) {
-    super(sqlSelectStatement, included, notIncluded);
+    super(sqlSelectStatement, included, excluded);
     this.reportItemNameExists = reportItemNameExists;
     this.masterView = masterView;
     this.itemName = itemName;
@@ -95,7 +95,7 @@ public class AddSelectItemVisitor extends AbstractAddItemVisitor<SQLSelectStatem
       if (owner == null) {
         List<String> declaredTableList = new ArrayList<>();
         viewToTableMap.forEach((view, tableName) -> {
-          if (tableName != null && JdbcSQLUtils.include(tableName, included, notIncluded)) {
+          if (tableName != null && JdbcSQLUtils.include(tableName, included, excluded)) {
             declaredTableList.add(tableName);
           }
         });
@@ -112,7 +112,7 @@ public class AddSelectItemVisitor extends AbstractAddItemVisitor<SQLSelectStatem
         }
       } else {
         String tableName = viewToTableMap.get(owner);
-        if (tableName != null && JdbcSQLUtils.include(tableName, included, notIncluded)) {
+        if (tableName != null && JdbcSQLUtils.include(tableName, included, excluded)) {
           mySelectItemList.add(new MySelectItem(sqlExpr, sqlExpr.toString().replace(".", "_")));
         }
       }
@@ -125,7 +125,7 @@ public class AddSelectItemVisitor extends AbstractAddItemVisitor<SQLSelectStatem
     String alias = x.getAlias();
     String tableName = x.getTableName();
     String view = alias == null ? tableName : alias;
-    if (!JdbcSQLUtils.include(tableName, included, notIncluded)) {
+    if (!JdbcSQLUtils.include(tableName, included, excluded)) {
       return;
     }
     List<MySelectItem> mySelectItemList = new ArrayList<>();

@@ -14,17 +14,17 @@ import java.util.List;
  * @since 2023/4/30 16:56
  */
 public class DruidDynamicItemRewriter implements DynamicItemRewriter {
-  private final List<String> notIncluded;
+  private final List<String> excluded;
 
   private final DataConvertorRegistry dataConvertorRegistry;
 
   public DruidDynamicItemRewriter(DataConvertorRegistry dataConvertorRegistry) {
-    this.notIncluded = null;
+    this.excluded = null;
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
-  public DruidDynamicItemRewriter(List<String> notIncluded, DataConvertorRegistry dataConvertorRegistry) {
-    this.notIncluded = notIncluded;
+  public DruidDynamicItemRewriter(List<String> excluded, DataConvertorRegistry dataConvertorRegistry) {
+    this.excluded = excluded;
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
@@ -35,7 +35,7 @@ public class DruidDynamicItemRewriter implements DynamicItemRewriter {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       MySqlInsertStatement insertStatement = (MySqlInsertStatement) sqlStatement;
       new AddInsertItemVisitor(
-          insertStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), notIncluded,
+          insertStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), excluded,
           dataConvertorRegistry, true, item,
           insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode).visit();
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
@@ -49,7 +49,7 @@ public class DruidDynamicItemRewriter implements DynamicItemRewriter {
       MySqlUpdateStatement updateStatement = (MySqlUpdateStatement) sqlStatement;
 
       new AddUpdateItemVisitor(
-          updateStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), notIncluded,
+          updateStatement, tableName == null ? null : ArrayUtils.asArrayList(tableName), excluded,
           dataConvertorRegistry, true, item, updateItemMode).visit();
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });

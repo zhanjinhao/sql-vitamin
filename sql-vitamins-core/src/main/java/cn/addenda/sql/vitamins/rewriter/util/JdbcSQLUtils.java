@@ -50,13 +50,13 @@ public class JdbcSQLUtils {
   }
 
   /**
-   * @param notIncluded notIncluded里的表一定返回false；
-   * @param included    included为null时，!notIncluded的表返回true；included不为null时，!notIncluded&included的表返回true。
+   * @param excluded excluded里的表一定返回false；
+   * @param included included为null时，!excluded的表返回true；included不为null时，!excluded&included的表返回true。
    */
   public static boolean include(
-      String tableName, List<String> included, List<String> notIncluded) {
-    if (notIncluded != null) {
-      for (String unContain : notIncluded) {
+      String tableName, List<String> included, List<String> excluded) {
+    if (excluded != null) {
+      for (String unContain : excluded) {
         if (unContain.equalsIgnoreCase(tableName)) {
           return false;
         }

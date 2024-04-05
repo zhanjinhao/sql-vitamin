@@ -23,10 +23,10 @@ public class BaseEntityRewriterConfigurer implements NamedConfigurer {
   }
 
   public BaseEntityRewriterConfigurer(
-      List<String> included, List<String> notIncluded,
+      List<String> included, List<String> excluded,
       BaseEntitySource baseEntitySource, DataConvertorRegistry dataConvertorRegistry) {
     this.baseEntityRewriter = new DruidBaseEntityRewriter(
-        included, notIncluded, baseEntitySource, dataConvertorRegistry);
+        included, excluded, baseEntitySource, dataConvertorRegistry);
   }
 
   public BaseEntityRewriterConfigurer(BaseEntityRewriter baseEntityRewriter) {

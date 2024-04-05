@@ -20,8 +20,8 @@ public class ViewAddJoinConditionVisitor extends TableAddJoinConditionVisitor {
     super(tableName, condition, useSubQuery);
   }
 
-  public ViewAddJoinConditionVisitor(List<String> included, List<String> notIncluded, String condition, boolean useSubQuery, boolean reWriteCommaToJoin) {
-    super(included, notIncluded, condition, useSubQuery, reWriteCommaToJoin);
+  public ViewAddJoinConditionVisitor(List<String> included, List<String> excluded, String condition, boolean useSubQuery, boolean reWriteCommaToJoin) {
+    super(included, excluded, condition, useSubQuery, reWriteCommaToJoin);
   }
 
   @Override

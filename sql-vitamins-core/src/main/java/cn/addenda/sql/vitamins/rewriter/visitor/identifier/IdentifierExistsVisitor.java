@@ -1,14 +1,12 @@
 package cn.addenda.sql.vitamins.rewriter.visitor.identifier;
 
 import cn.addenda.sql.vitamins.rewriter.SqlVitaminsException;
-import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.DruidSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import cn.addenda.sql.vitamins.rewriter.visitor.ViewToTableVisitor;
 import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
-import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlDeleteStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlInsertStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUpdateStatement;
@@ -31,25 +29,25 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
 
   private final List<String> included;
 
-  private final List<String> notIncluded;
+  private final List<String> excluded;
 
   @Getter
   protected boolean exists = false;
 
   public IdentifierExistsVisitor(
       String sql, String identifier,
-      List<String> included, List<String> notIncluded) {
+      List<String> included, List<String> excluded) {
     super(sql, identifier);
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
   }
 
   public IdentifierExistsVisitor(
       SQLStatement sql, String identifier,
-      List<String> included, List<String> notIncluded) {
+      List<String> included, List<String> excluded) {
     super(sql, identifier);
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
   }
 
   public IdentifierExistsVisitor(String sql, String identifier) {
@@ -87,7 +85,7 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
       if (owner == null) {
         List<String> declaredTableList = new ArrayList<>();
         viewToTableMap.forEach((view, table) -> {
-          if (table != null && JdbcSQLUtils.include(table, included, notIncluded)) {
+          if (table != null && JdbcSQLUtils.include(table, included, excluded)) {
             declaredTableList.add(table);
           }
         });
@@ -109,7 +107,7 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
         }
       } else {
         String tableName = viewToTableMap.get(owner);
-        if (tableName != null && JdbcSQLUtils.include(tableName, included, notIncluded)) {
+        if (tableName != null && JdbcSQLUtils.include(tableName, included, excluded)) {
           exists = true;
           break;
         }
@@ -155,7 +153,7 @@ public class IdentifierExistsVisitor extends AbstractIdentifierVisitor {
   public String toString() {
     return "IdentifierExistsVisitor{" +
         "included=" + included +
-        ", notIncluded=" + notIncluded +
+        ", excluded=" + excluded +
         ", exists=" + exists +
         "} " + super.toString();
   }

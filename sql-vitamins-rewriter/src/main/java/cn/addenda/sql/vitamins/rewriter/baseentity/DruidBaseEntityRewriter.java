@@ -28,7 +28,7 @@ public class DruidBaseEntityRewriter implements BaseEntityRewriter {
   /**
    * 不需要基础字段的表
    */
-  private final List<String> notIncluded;
+  private final List<String> excluded;
 
   private final DataConvertorRegistry dataConvertorRegistry;
 
@@ -45,11 +45,11 @@ public class DruidBaseEntityRewriter implements BaseEntityRewriter {
   }
 
   public DruidBaseEntityRewriter(
-      List<String> included, List<String> notIncluded,
+      List<String> included, List<String> excluded,
       BaseEntitySource baseEntitySource, DataConvertorRegistry dataConvertorRegistry) {
     this.baseEntitySource = baseEntitySource;
     this.included = included;
-    this.notIncluded = notIncluded;
+    this.excluded = excluded;
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
@@ -67,7 +67,7 @@ public class DruidBaseEntityRewriter implements BaseEntityRewriter {
         String columnName = INSERT_COLUMN_NAME_LIST.get(i);
         String fieldName = INSERT_FIELD_NAME_LIST.get(i);
         Item item = new Item(columnName, baseEntitySource.get(fieldName));
-        new AddInsertItemVisitor((MySqlInsertStatement) sqlStatement, included, notIncluded,
+        new AddInsertItemVisitor((MySqlInsertStatement) sqlStatement, included, excluded,
             dataConvertorRegistry, true, item, insertAddSelectItemMode,
             duplicateKeyUpdate && UPDATE_FIELD_NAME_LIST.contains(fieldName), updateItemMode).visit();
       }
@@ -80,8 +80,8 @@ public class DruidBaseEntityRewriter implements BaseEntityRewriter {
   public String rewriteSelectSql(String sql, String masterView) {
     return DruidSQLUtils.statementMerge(sql, sqlStatement -> {
       for (String column : INSERT_COLUMN_NAME_LIST) {
-        new AddSelectItemVisitor((SQLSelectStatement) sqlStatement, included, notIncluded,
-            false, masterView, column).visit();
+        new AddSelectItemVisitor((SQLSelectStatement) sqlStatement,
+            included, excluded, false, masterView, column).visit();
       }
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
     });
@@ -94,8 +94,8 @@ public class DruidBaseEntityRewriter implements BaseEntityRewriter {
         String columnName = UPDATE_COLUMN_NAME_LIST.get(i);
         String fieldName = UPDATE_FIELD_NAME_LIST.get(i);
         Item item = new Item(columnName, baseEntitySource.get(fieldName));
-        new AddUpdateItemVisitor((MySqlUpdateStatement) sqlStatement, included,
-            notIncluded, dataConvertorRegistry, true, item, updateItemMode).visit();
+        new AddUpdateItemVisitor((MySqlUpdateStatement) sqlStatement,
+            included, excluded, dataConvertorRegistry, true, item, updateItemMode).visit();
       }
 
       return DruidSQLUtils.toLowerCaseSQL(sqlStatement);
