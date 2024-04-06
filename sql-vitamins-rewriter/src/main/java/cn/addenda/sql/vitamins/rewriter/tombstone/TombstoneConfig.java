@@ -18,6 +18,7 @@ public class TombstoneConfig {
 
   public TombstoneConfig(TombstoneConfig tombstoneConfig) {
     this.disable = tombstoneConfig.disable;
+    this.compatibleMode = tombstoneConfig.compatibleMode;
     this.joinUseSubQuery = tombstoneConfig.joinUseSubQuery;
     this.includeDeleteTime = tombstoneConfig.includeDeleteTime;
   }
