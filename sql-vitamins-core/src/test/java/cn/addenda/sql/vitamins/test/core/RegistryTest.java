@@ -5,14 +5,18 @@ import cn.addenda.sql.vitamins.rewriter.convertor.AbstractDataConvertorRegistry;
 import cn.addenda.sql.vitamins.rewriter.convertor.DataConvertor;
 import cn.addenda.sql.vitamins.rewriter.convertor.DefaultDataConvertorRegistry;
 import cn.addenda.sql.vitamins.rewriter.convertor.type.CharSequenceDataConvertor;
+import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -33,16 +37,16 @@ public class RegistryTest {
     OffsetDateTime offsetDateTime = OffsetDateTime.now(ZoneId.of("UTC+9"));
 
     DefaultDataConvertorRegistry registry = new DefaultDataConvertorRegistry(ZoneId.of("UTC+7"));
-    ass(registry.format(1), "1");
-    ass(registry.format("str"), "'str'");
-    ass(registry.format(new StringBuilder("sb")), "'sb'");
-    ass(registry.format(date), "'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + "'");
-    ass(registry.format(sqldate), "'" + new SimpleDateFormat("yyyy-MM-dd").format(sqldate) + "'");
-    ass(registry.format(localDateTime), "'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(localDateTime) + "'");
-    ass(registry.format(zonedDateTime), "'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(zonedDateTime.plusHours(-2)) + "'");
-    ass(registry.format(offsetDateTime), "'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(offsetDateTime.plusHours(-2)) + "'");
-    ass(registry.format(localDate), "'" + DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDate) + "'");
-    ass(registry.format(localTime), "'" + DateTimeFormatter.ofPattern("HH:mm:ss").format(localTime) + "'");
+    Assert.assertEquals("1", registry.format(1));
+    Assert.assertEquals("'str'", registry.format("str"));
+    Assert.assertEquals("'sb'", registry.format(new StringBuilder("sb")));
+    Assert.assertEquals("'" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date) + "'", registry.format(date));
+    Assert.assertEquals("'" + new SimpleDateFormat("yyyy-MM-dd").format(sqldate) + "'", registry.format(sqldate));
+    Assert.assertEquals("'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(localDateTime) + "'", registry.format(localDateTime));
+    Assert.assertEquals("'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(zonedDateTime.plusHours(-2)) + "'", registry.format(zonedDateTime));
+    Assert.assertEquals("'" + DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(offsetDateTime.plusHours(-2)) + "'", registry.format(offsetDateTime));
+    Assert.assertEquals("'" + DateTimeFormatter.ofPattern("yyyy-MM-dd").format(localDate) + "'", registry.format(localDate));
+    Assert.assertEquals("'" + DateTimeFormatter.ofPattern("HH:mm:ss").format(localTime) + "'", registry.format(localTime));
 
 
     System.out.println("\n--------------------- fastDataConvertorMap ------------------\n");
@@ -52,15 +56,6 @@ public class RegistryTest {
         System.out.println("class: " + aClass.getName() + ", convertor: " + dataConvertor + "。");
       }
     });
-  }
-
-  private void ass(String s1, String s2) {
-    if (s1.equals(s2)) {
-      System.out.println("actual: " + s1 + ", expect: " + s2);
-    } else {
-      System.err.println("actual: " + s1 + ", expect: " + s2);
-      throw new RuntimeException();
-    }
   }
 
   @Test
@@ -73,6 +68,11 @@ public class RegistryTest {
           @Override
           public Class<String> getType() {
             return String.class;
+          }
+
+          @Override
+          public String format(Object obj) {
+            return obj.toString();
           }
 
           @Override
@@ -94,16 +94,28 @@ public class RegistryTest {
       }
     };
 
-    ass(registry.format("aaa"), "'tbaaatf'");
+    // aaa是String类型，距离AbstractDataConvertor<String, SQLExpr>更近，所以解析成tbaaatf
+    Assert.assertEquals("'tbaaatf'", registry.parse("aaa").toString());
   }
 
   @Test
   public void test3() {
-    DefaultDataConvertorRegistry registry = new DefaultDataConvertorRegistry(ZoneId.of("UTC+7"));
-    ass(registry.parse("DATETIME 2020-12-12 12:12:12", LocalDateTime.class).toString(), "DATETIME '2020-12-12 12:12:12'");
-    // todo
-//        ass(registry.parse("2020-12-12 12:12:12", ZonedDateTime.class).toString(), "DATETIME '2020-12-12 12:12:12'");
+    DefaultDataConvertorRegistry registry = new DefaultDataConvertorRegistry(ZoneId.of("Asia/Bangkok"));
+    Assert.assertEquals("DATETIME '2020-12-12 12:12:12'", registry.parse("DATETIME 2020-12-12 12:12:12", LocalDateTime.class).toString());
+    Assert.assertEquals("DATETIME '2020-12-12 11:12:12'", registry.parse("2020-12-12 12:12:12", ZonedDateTime.class).toString());
+  }
 
+  @Test
+  public void test4() {
+    String sql = "update t set a = 'aaaa'";
+    List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, "mysql");
+    System.out.println(sqlStatements.get(0));
+  }
+
+  @Test
+  public void test5() {
+    CharSequenceDataConvertor charSequenceDataConvertor = new CharSequenceDataConvertor(new DefaultDataConvertorRegistry());
+    Assert.assertEquals("'123\\\\'''", charSequenceDataConvertor.format("123\\'"));
   }
 
 }

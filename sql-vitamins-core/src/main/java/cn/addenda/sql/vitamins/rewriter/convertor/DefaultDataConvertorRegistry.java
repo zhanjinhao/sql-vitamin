@@ -36,6 +36,7 @@ public class DefaultDataConvertorRegistry extends AbstractDataConvertorRegistry 
     addDataConvertor(new SQLSmallIntExprDataConvertor());
     addDataConvertor(new SQLTimeExprDataConvertor(zoneId));
     addDataConvertor(new SQLTinyIntExprDataConvertor());
+    addDataConvertor(new SQLNullExprDataConvertor());
 
     addDataConvertor(new BooleanDataConvertor());
     addDataConvertor(new ByteDataConvertor());

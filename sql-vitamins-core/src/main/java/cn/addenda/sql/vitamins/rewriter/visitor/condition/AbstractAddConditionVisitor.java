@@ -28,6 +28,9 @@ public abstract class AbstractAddConditionVisitor extends MySqlASTVisitorAdapter
   protected final List<String> included;
   protected final List<String> excluded;
 
+  /**
+   * a = 'a'、b != 'b'、a is null都可以支持
+   */
   protected final String condition;
 
   protected static final String TABLE_NAME_KEY = "tableNameKey";

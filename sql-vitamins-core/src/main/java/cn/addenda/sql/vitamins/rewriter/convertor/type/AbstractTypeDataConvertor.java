@@ -5,6 +5,12 @@ import cn.addenda.sql.vitamins.rewriter.convertor.sqlexpr.AbstractSQLExprDataCon
 import com.alibaba.druid.sql.ast.SQLExpr;
 
 /**
+ * <ul>
+ *   <li>String format(Object obj): Object -> MySQL String</li>
+ *   <li>R parse(Object obj): Object -> SQLExpr</li>
+ *   <li>R parse(String str): Java String -> SQLExpr</li>
+ * </ul>
+ *
  * @author addenda
  * @since 2023/7/2 15:53
  */

@@ -2,6 +2,7 @@ package cn.addenda.sql.vitamins.rewriter.convertor.type;
 
 import cn.addenda.sql.vitamins.rewriter.convertor.AbstractDataConvertor;
 import cn.addenda.sql.vitamins.rewriter.convertor.DataConvertorRegistry;
+import cn.addenda.sql.vitamins.rewriter.convertor.sqlexpr.SQLCharExprDataConvertor;
 import cn.addenda.sql.vitamins.rewriter.util.ArrayUtils;
 import cn.addenda.sql.vitamins.rewriter.util.JdbcSQLUtils;
 import com.alibaba.druid.sql.ast.SQLExpr;
@@ -18,19 +19,16 @@ public class CharSequenceDataConvertor extends AbstractDataConvertor<CharSequenc
 
   private final DataConvertorRegistry dataConvertorRegistry;
 
+  private final SQLCharExprDataConvertor sqlCharExprDataConvertor = new SQLCharExprDataConvertor();
+
   public CharSequenceDataConvertor(DataConvertorRegistry dataConvertorRegistry) {
     this.dataConvertorRegistry = dataConvertorRegistry;
   }
 
   @Override
-  public Class<CharSequence> getType() {
-    return CharSequence.class;
-  }
-
-  @Override
   public String format(Object obj) {
     SQLExpr parse = parse(obj);
-    return parse.toString().replace("\\", "\\\\");
+    return sqlCharExprDataConvertor.format(parse);
   }
 
   @Override
@@ -43,16 +41,6 @@ public class CharSequenceDataConvertor extends AbstractDataConvertor<CharSequenc
     return new SQLCharExpr(text);
   }
 
-  @Override
-  public SQLExpr doParse(String str) {
-    return new SQLCharExpr(str);
-  }
-
-  @Override
-  public boolean strMatch(String str) {
-    return true;
-  }
-
   private static final List<String> dateFunctionList = ArrayUtils.asArrayList("now", "sysdate", "current_timestamp");
 
   private SQLMethodInvokeExpr extractDateFunction(String text) {
@@ -63,6 +51,16 @@ public class CharSequenceDataConvertor extends AbstractDataConvertor<CharSequenc
       }
     }
     return null;
+  }
+
+  @Override
+  public SQLExpr doParse(String str) {
+    return sqlCharExprDataConvertor.parse(str);
+  }
+
+  @Override
+  public boolean strMatch(String str) {
+    return sqlCharExprDataConvertor.strMatch(str);
   }
 
 }
