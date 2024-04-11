@@ -28,6 +28,18 @@ public class BaseEntityContext {
     return baseEntityConfig.getDisable();
   }
 
+  public static void setSelectDisable(boolean selectDisable) {
+    Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
+    BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();
+    baseEntityConfig.setSelectDisable(selectDisable);
+  }
+
+  public static Boolean getSelectDisable() {
+    Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
+    BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();
+    return baseEntityConfig.getSelectDisable();
+  }
+
   public static void setCompatibleMode(boolean disable) {
     Deque<BaseEntityConfig> baseEntityConfigDeque = BASE_ENTITY_TL.get();
     BaseEntityConfig baseEntityConfig = baseEntityConfigDeque.peek();

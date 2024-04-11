@@ -31,6 +31,9 @@ public @interface EnableBaseEntity {
   String baseEntityRewriter() default NamedConfigurer.DEFAULT;
 
   boolean disable() default false;
+
+  boolean selectDisable() default true;
+
   boolean compatibleMode() default false;
 
   boolean duplicateKeyUpdate() default false;
