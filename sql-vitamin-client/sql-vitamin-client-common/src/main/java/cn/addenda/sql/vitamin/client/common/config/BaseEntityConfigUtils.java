@@ -26,6 +26,11 @@ public class BaseEntityConfigUtils {
       Propagation.configWithPropagation(propagation, disable,
           BaseEntityContext::setDisable, BaseEntityContext::getDisable);
     }
+    Boolean selectDisable = baseEntityConfig.getSelectDisable();
+    if (selectDisable != null) {
+      Propagation.configWithPropagation(propagation, disable,
+          BaseEntityContext::setSelectDisable, BaseEntityContext::getSelectDisable);
+    }
     Boolean compatibleMode = baseEntityConfig.getCompatibleMode();
     if (compatibleMode != null) {
       Propagation.configWithPropagation(propagation, compatibleMode,
@@ -58,6 +63,7 @@ public class BaseEntityConfigUtils {
         configBaseEntity.propagation(),
         BaseEntityConfig.of(
             BoolConfig.toBoolean(configBaseEntity.disable()),
+            BoolConfig.toBoolean(configBaseEntity.selectDisable()),
             BoolConfig.toBoolean(configBaseEntity.compatibleMode()),
             configBaseEntity.masterView(),
             BoolConfig.toBoolean(configBaseEntity.duplicateKeyUpdate()),

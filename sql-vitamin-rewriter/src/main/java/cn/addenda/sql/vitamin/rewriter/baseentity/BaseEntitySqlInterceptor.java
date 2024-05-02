@@ -19,13 +19,14 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
 
   private final BaseEntityRewriter baseEntityRewriter;
   private final boolean defaultDisable;
+  private final boolean defaultSelectDisable;
   private final boolean defaultCompatibleMode;
   private final InsertAddSelectItemMode defaultInsertAddSelectItemMode;
   private final boolean defaultDuplicateKeyUpdate;
   private final UpdateItemMode defaultUpdateItemMode;
 
   public BaseEntitySqlInterceptor(
-      boolean removeEnter, boolean disable, boolean compatibleMode,
+      boolean removeEnter, boolean disable, boolean selectDisable, boolean compatibleMode,
       BaseEntityRewriter baseEntityRewriter, InsertAddSelectItemMode insertAddSelectItemMode,
       boolean duplicateKeyUpdate, UpdateItemMode updateItemMode) {
     super(removeEnter);
@@ -39,6 +40,7 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
       throw new BaseEntityException("`updateItemMode` can not be null!");
     }
     this.defaultDisable = disable;
+    this.defaultSelectDisable = selectDisable;
     this.defaultCompatibleMode = compatibleMode;
     this.baseEntityRewriter = baseEntityRewriter;
     this.defaultInsertAddSelectItemMode = insertAddSelectItemMode;
@@ -74,7 +76,10 @@ public class BaseEntitySqlInterceptor extends AbstractSqlInterceptor {
     String newSql = sql;
     try {
       if (JdbcSQLUtils.isSelect(newSql)) {
-        newSql = baseEntityRewriter.rewriteSelectSql(newSql, BaseEntityContext.getMasterView());
+        Boolean selectDisable = JdbcSQLUtils.getOrDefault(BaseEntityContext.getSelectDisable(), defaultSelectDisable);
+        if (Boolean.FALSE.equals(selectDisable)) {
+          newSql = baseEntityRewriter.rewriteSelectSql(newSql, BaseEntityContext.getMasterView());
+        }
       } else if (JdbcSQLUtils.isUpdate(newSql)) {
         UpdateItemMode updateItemMode =
             JdbcSQLUtils.getOrDefault(BaseEntityContext.getUpdateItemMode(), defaultUpdateItemMode);

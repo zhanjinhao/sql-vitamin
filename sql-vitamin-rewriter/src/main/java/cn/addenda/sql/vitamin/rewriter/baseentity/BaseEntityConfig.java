@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class BaseEntityConfig {
   private Boolean disable;
+  private Boolean selectDisable;
   private Boolean compatibleMode;
   private String masterView;
   private Boolean duplicateKeyUpdate;
@@ -19,6 +20,7 @@ public class BaseEntityConfig {
 
   public BaseEntityConfig(BaseEntityConfig baseEntityConfig) {
     this.disable = baseEntityConfig.disable;
+    this.selectDisable = baseEntityConfig.selectDisable;
     this.compatibleMode = baseEntityConfig.compatibleMode;
     this.masterView = baseEntityConfig.masterView;
     this.duplicateKeyUpdate = baseEntityConfig.duplicateKeyUpdate;
@@ -27,9 +29,9 @@ public class BaseEntityConfig {
   }
 
   public static BaseEntityConfig of(
-      Boolean disable, Boolean compatibleMode, String masterView, Boolean duplicateKeyUpdate,
+      Boolean disable, Boolean selectDisable, Boolean compatibleMode, String masterView, Boolean duplicateKeyUpdate,
       InsertAddSelectItemMode insertAddSelectItemMode, UpdateItemMode updateItemMode) {
-    return new BaseEntityConfig(disable, compatibleMode, masterView,
+    return new BaseEntityConfig(disable, selectDisable, compatibleMode, masterView,
         duplicateKeyUpdate, insertAddSelectItemMode, updateItemMode);
   }
 

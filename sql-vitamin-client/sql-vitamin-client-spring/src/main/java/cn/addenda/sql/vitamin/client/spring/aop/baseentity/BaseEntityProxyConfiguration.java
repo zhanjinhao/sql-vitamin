@@ -37,6 +37,7 @@ public class BaseEntityProxyConfiguration implements ImportAware {
   private BaseEntityRewriter baseEntityRewriter;
 
   private boolean disable;
+  private boolean selectDisable;
   private boolean compatibleMode;
 
   private boolean duplicateKeyUpdate;
@@ -62,6 +63,7 @@ public class BaseEntityProxyConfiguration implements ImportAware {
     this.order = annotationAttributes.getNumber("order");
     this.removeEnter = annotationAttributes.getBoolean("removeEnter");
     this.disable = annotationAttributes.getBoolean("disable");
+    this.selectDisable = annotationAttributes.getBoolean("selectDisable");
     this.compatibleMode = annotationAttributes.getBoolean("compatibleMode");
     this.insertAddSelectItemMode = annotationAttributes.getEnum("insertAddSelectItemMode");
     this.duplicateKeyUpdate = annotationAttributes.getBoolean("duplicateKeyUpdate");
@@ -100,8 +102,8 @@ public class BaseEntityProxyConfiguration implements ImportAware {
 
     @Override
     protected BaseEntitySqlInterceptor getSqlInterceptor() {
-      return new BaseEntitySqlInterceptor(removeEnter, disable, compatibleMode, baseEntityRewriter,
-          insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
+      return new BaseEntitySqlInterceptor(removeEnter, disable, selectDisable, compatibleMode,
+          baseEntityRewriter, insertAddSelectItemMode, duplicateKeyUpdate, updateItemMode);
     }
 
     @Override
