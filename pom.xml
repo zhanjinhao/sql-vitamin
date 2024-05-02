@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>cn.addenda</groupId>
-  <artifactId>sql-vitamins</artifactId>
+  <artifactId>sql-vitamin</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>sql-vitamins-core</module>
-    <module>sql-vitamins-rewriter</module>
-    <module>sql-vitamins-client</module>
+    <module>sql-vitamin-core</module>
+    <module>sql-vitamin-rewriter</module>
+    <module>sql-vitamin-client</module>
   </modules>
 
   <properties>
