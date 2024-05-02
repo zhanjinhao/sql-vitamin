@@ -16,7 +16,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTombstone(compatibleMode = true)
-@EnableBaseEntity(compatibleMode = true)
+@EnableBaseEntity(compatibleMode = true, selectDisable = false)
 public class TombstoneTestConfiguration {
 
   @Bean
