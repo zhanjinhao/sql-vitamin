@@ -1,6 +1,5 @@
 package cn.addenda.sql.vitamin.rewriter.tombstone;
 
-import cn.addenda.sql.vitamin.rewriter.baseentity.BaseEntityException;
 import cn.addenda.sql.vitamin.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamin.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamin.rewriter.util.JdbcSQLUtils;
@@ -84,7 +83,7 @@ public class TombstoneSqlInterceptor extends AbstractSqlInterceptor {
         if (Boolean.TRUE.equals(compatibleMode)) {
           log.info(msg);
         } else {
-          throw new BaseEntityException(msg);
+          throw new TombstoneException(msg);
         }
       }
     } catch (TombstoneException tombstoneException) {

@@ -3,7 +3,6 @@ package cn.addenda.sql.vitamin.client.mybatis.interceptor;
 import cn.addenda.sql.vitamin.client.mybatis.helper.DefaultMsIdExtractHelper;
 import cn.addenda.sql.vitamin.client.mybatis.helper.MsIdExtractHelper;
 import cn.addenda.sql.vitamin.rewriter.SqlVitaminException;
-import cn.addenda.sql.vitamin.rewriter.dynamic.DynamicSQLException;
 import lombok.Setter;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Plugin;
@@ -45,7 +44,7 @@ public abstract class AbstractSqlVitaminMybatisInterceptor implements Intercepto
           aClass = (Class<? extends MsIdExtractHelper>) Class.forName(aMsIdExtractHelper);
         } catch (Exception e) {
           String msg = String.format("找不到类，MsIdExtractHelper初始化失败：[%s]。", aMsIdExtractHelper);
-          throw new DynamicSQLException(msg, e);
+          throw new SqlVitaminException(msg, e);
         }
 
         this.msIdExtractHelper = newInstance(aClass);

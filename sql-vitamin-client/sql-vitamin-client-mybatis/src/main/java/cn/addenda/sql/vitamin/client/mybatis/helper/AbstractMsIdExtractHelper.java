@@ -1,7 +1,7 @@
 package cn.addenda.sql.vitamin.client.mybatis.helper;
 
 import cn.addenda.sql.vitamin.client.common.annotation.*;
-import cn.addenda.sql.vitamin.rewriter.baseentity.BaseEntityException;
+import cn.addenda.sql.vitamin.rewriter.SqlVitaminException;
 import cn.addenda.sql.vitamin.rewriter.util.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
@@ -84,7 +84,7 @@ public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
       return AnnotationUtils.extractAnnotationFromMethod(aClass, methodName, tClass);
     } catch (ClassNotFoundException e) {
       String msg = String.format("无法找到对应的Mapper：[%s]。", msId);
-      throw new BaseEntityException(msg, e);
+      throw new SqlVitaminException(msg, e);
     }
   }
 

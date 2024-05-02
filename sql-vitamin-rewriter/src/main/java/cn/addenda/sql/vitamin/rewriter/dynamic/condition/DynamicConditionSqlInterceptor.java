@@ -1,7 +1,6 @@
 package cn.addenda.sql.vitamin.rewriter.dynamic.condition;
 
 import cn.addenda.sql.vitamin.rewriter.dynamic.DynamicSQLException;
-import cn.addenda.sql.vitamin.rewriter.tombstone.TombstoneException;
 import cn.addenda.sql.vitamin.rewriter.AbstractSqlInterceptor;
 import cn.addenda.sql.vitamin.rewriter.util.ExceptionUtil;
 import cn.addenda.sql.vitamin.rewriter.util.JdbcSQLUtils;
@@ -82,7 +81,7 @@ public class DynamicConditionSqlInterceptor extends AbstractSqlInterceptor {
         throw dynamicSQLException;
       } catch (Throwable throwable) {
         String msg = String.format("增加动态条件时出错，SQL：[%s]。", removeEnter(sql));
-        throw new TombstoneException(msg, ExceptionUtil.unwrapThrowable(throwable));
+        throw new DynamicSQLException(msg, ExceptionUtil.unwrapThrowable(throwable));
       }
 
     }
