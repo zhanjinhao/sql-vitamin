@@ -15,16 +15,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * @author addenda
  * @since 2022/8/16 20:40
  */
 @JsonIgnoreProperties({
-    BaseEntity.N_CREATOR, BaseEntity.N_CREATOR_NAME, BaseEntity.N_CREATE_TIME, BaseEntity.N_MODIFIER,
-    BaseEntity.N_MODIFIER_NAME, BaseEntity.N_MODIFY_TIME, BaseEntity.N_REMARK})
+        BaseEntity.N_CREATOR, BaseEntity.N_CREATOR_NAME, BaseEntity.N_CREATE_TIME, BaseEntity.N_MODIFIER,
+        BaseEntity.N_MODIFIER_NAME, BaseEntity.N_MODIFY_TIME, BaseEntity.N_REMARK})
 public abstract class BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -37,39 +38,64 @@ public abstract class BaseEntity implements Serializable {
   public static final String N_MODIFY_TIME = "modifyTime";
   public static final String N_REMARK = "remark";
 
-  public static List<String> getAllColumnNameList() {
-    return getAllFieldNameList().stream().map(BaseEntity::camelCaseToSnakeCase).collect(Collectors.toList());
-  }
+  private static final Map<String, Field> allFieldNameMap;
+  private static final List<String> allFieldNameList;
+  private static final Map<String, Field> allColumnNameMap;
+  private static final List<String> allColumnNameList;
+  private static final List<String> updateColumnNameList;
+  private static final List<String> updateFieldNameList;
 
-  public static List<String> getAllFieldNameList() {
-    List<String> fieldNameList = new ArrayList<>();
+  static {
+    allFieldNameMap = new HashMap<>();
+    allFieldNameList = new ArrayList<>();
+    allColumnNameMap = new HashMap<>();
+    allColumnNameList = new ArrayList<>();
     Class<BaseEntity> baseEntityClass = BaseEntity.class;
     Field[] declaredFields = baseEntityClass.getDeclaredFields();
     for (Field field : declaredFields) {
       if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
         continue;
       }
-      fieldNameList.add(field.getName());
+      allFieldNameMap.put(field.getName(), field);
+      allFieldNameList.add(field.getName());
+      allColumnNameMap.put(camelCaseToSnakeCase(field.getName()), field);
+      allColumnNameList.add(camelCaseToSnakeCase(field.getName()));
     }
-    return fieldNameList;
+
+    updateColumnNameList = new ArrayList<>();
+    updateFieldNameList = new ArrayList<>();
+    for (Field field : declaredFields) {
+      if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())
+              || !field.isAnnotationPresent(UpdateField.class)) {
+        continue;
+      }
+      updateColumnNameList.add(camelCaseToSnakeCase(field.getName()));
+      updateFieldNameList.add(field.getName());
+    }
+  }
+
+  public static List<String> getAllColumnNameList() {
+    return allColumnNameList;
+  }
+
+  public static List<String> getAllFieldNameList() {
+    return allFieldNameList;
   }
 
   public static List<String> getUpdateColumnNameList() {
-    return getUpdateFieldNameList().stream().map(BaseEntity::camelCaseToSnakeCase).collect(Collectors.toList());
+    return updateColumnNameList;
   }
 
   public static List<String> getUpdateFieldNameList() {
-    List<String> fieldNameList = new ArrayList<>();
-    Class<BaseEntity> baseEntityClass = BaseEntity.class;
-    Field[] declaredFields = baseEntityClass.getDeclaredFields();
-    for (Field field : declaredFields) {
-      if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())
-          || !field.isAnnotationPresent(UpdateField.class)) {
-        continue;
-      }
-      fieldNameList.add(field.getName());
-    }
-    return fieldNameList;
+    return updateFieldNameList;
+  }
+
+  public static Field getFieldByFieldName(String fieldName) {
+    return allFieldNameMap.get(fieldName);
+  }
+
+  public static Field getFieldByColumnName(String fieldName) {
+    return allColumnNameMap.get(fieldName);
   }
 
   private static String camelCaseToSnakeCase(String camelCase) {
@@ -93,6 +119,7 @@ public abstract class BaseEntity implements Serializable {
 
   @UpdateField
   private String modifier;
+
   @UpdateField
   private String modifierName;
 
@@ -163,14 +190,14 @@ public abstract class BaseEntity implements Serializable {
   @Override
   public String toString() {
     return "BaseEntity{" +
-        "creator='" + creator + '\'' +
-        ", creatorName='" + creatorName + '\'' +
-        ", createTime=" + createTime +
-        ", modifier='" + modifier + '\'' +
-        ", modifierName='" + modifierName + '\'' +
-        ", modifyTime=" + modifyTime +
-        ", remark='" + remark + '\'' +
-        '}';
+            "creator='" + creator + '\'' +
+            ", creatorName='" + creatorName + '\'' +
+            ", createTime=" + createTime +
+            ", modifier='" + modifier + '\'' +
+            ", modifierName='" + modifierName + '\'' +
+            ", modifyTime=" + modifyTime +
+            ", remark='" + remark + '\'' +
+            '}';
   }
 
   private static class LocalDateTimeStrDeSerializer extends JsonDeserializer<LocalDateTime> {
