@@ -12,6 +12,7 @@
     <module>sql-vitamin-core</module>
     <module>sql-vitamin-rewriter</module>
     <module>sql-vitamin-client</module>
+    <module>sql-vitamin-all</module>
   </modules>
 
   <properties>
