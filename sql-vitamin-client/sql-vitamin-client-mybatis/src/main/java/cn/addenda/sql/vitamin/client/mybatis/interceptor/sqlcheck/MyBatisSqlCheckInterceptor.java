@@ -20,11 +20,11 @@ import org.apache.ibatis.session.RowBounds;
  * @since 2023/6/8 22:58
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
 })
 public class MyBatisSqlCheckInterceptor extends AbstractSqlVitaminMybatisInterceptor {
 
@@ -40,8 +40,12 @@ public class MyBatisSqlCheckInterceptor extends AbstractSqlVitaminMybatisInterce
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigSqlCheck configSqlCheck = msIdExtractHelper.extractConfigSqlCheck(msId);
+    if (configSqlCheck == null) {
+      return invocation.proceed();
+    }
+
     try {
-      ConfigSqlCheck configSqlCheck = msIdExtractHelper.extractConfigSqlCheck(msId);
       SqlCheckConfigUtils.pushSqlCheck(configSqlCheck.propagation());
       SqlCheckConfigUtils.configSqlCheck(configSqlCheck);
       return invocation.proceed();

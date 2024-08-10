@@ -23,6 +23,10 @@ public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
   private final Map<String, ConfigDynamicItem> configDynamicItemMap = new ConcurrentHashMap<>();
   private final Map<String, ConfigDynamicTableName> configDynamicTableNameMap = new ConcurrentHashMap<>();
 
+  /**
+   * 如果方法在执行的过程中调用了其他的方法，让被调用者能使用调用者的config。
+   * 经典案例就是PageHelper。其调用过程中可以调用自定的count方法。配置后缀_COUNT之后，queryPage_COUNT能使用queryPage的config。
+   */
   private final Set<String> suffixSet;
 
   protected AbstractMsIdExtractHelper(Set<String> suffixSet) {
@@ -36,43 +40,43 @@ public abstract class AbstractMsIdExtractHelper implements MsIdExtractHelper {
   @Override
   public ConfigBaseEntity extractConfigBaseEntity(String msId) {
     return disableBaseEntityMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigBaseEntity.class));
+            s -> extract(msId, ConfigBaseEntity.class));
   }
 
   @Override
   public ConfigDynamicSuffix extractConfigDynamicSuffix(String msId) {
     return configDynamicSuffixMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigDynamicSuffix.class));
+            s -> extract(msId, ConfigDynamicSuffix.class));
   }
 
   @Override
   public ConfigTombstone extractConfigTombstone(String msId) {
     return disableTombstoneMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigTombstone.class));
+            s -> extract(msId, ConfigTombstone.class));
   }
 
   @Override
   public ConfigSqlCheck extractConfigSqlCheck(String msId) {
     return configSqlCheckMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigSqlCheck.class));
+            s -> extract(msId, ConfigSqlCheck.class));
   }
 
   @Override
   public ConfigDynamicCondition extractConfigDynamicCondition(String msId) {
     return configDynamicConditionMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigDynamicCondition.class));
+            s -> extract(msId, ConfigDynamicCondition.class));
   }
 
   @Override
   public ConfigDynamicItem extractConfigDynamicItem(String msId) {
     return configDynamicItemMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigDynamicItem.class));
+            s -> extract(msId, ConfigDynamicItem.class));
   }
 
   @Override
   public ConfigDynamicTableName extractConfigDynamicTableName(String msId) {
     return configDynamicTableNameMap.computeIfAbsent(msId,
-        s -> extract(msId, ConfigDynamicTableName.class));
+            s -> extract(msId, ConfigDynamicTableName.class));
   }
 
   protected <T extends Annotation> T extract(String msId, Class<T> tClass) {

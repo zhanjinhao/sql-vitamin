@@ -41,9 +41,12 @@ public class MyBatisDynamicTableNameInterceptor extends AbstractSqlVitaminMybati
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigDynamicTableName configDynamicTableName = msIdExtractHelper.extractConfigDynamicTableName(msId);
+    if (configDynamicTableName == null) {
+      return invocation.proceed();
+    }
 
     try {
-      ConfigDynamicTableName configDynamicTableName = msIdExtractHelper.extractConfigDynamicTableName(msId);
       DynamicTableNameConfigUtils.pushDynamicTableName(configDynamicTableName.propagation());
       DynamicTableNameConfigUtils.configDynamicTableName(configDynamicTableName);
       return invocation.proceed();

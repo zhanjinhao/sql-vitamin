@@ -40,8 +40,12 @@ public class MyBatisBaseEntityInterceptor extends AbstractSqlVitaminMybatisInter
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigBaseEntity configBaseEntity = msIdExtractHelper.extractConfigBaseEntity(msId);
+    if (configBaseEntity == null) {
+      return invocation.proceed();
+    }
+
     try {
-      ConfigBaseEntity configBaseEntity = msIdExtractHelper.extractConfigBaseEntity(msId);
       BaseEntityConfigUtils.pushBaseEntity(configBaseEntity.propagation());
       BaseEntityConfigUtils.configBaseEntity(configBaseEntity);
       return invocation.proceed();

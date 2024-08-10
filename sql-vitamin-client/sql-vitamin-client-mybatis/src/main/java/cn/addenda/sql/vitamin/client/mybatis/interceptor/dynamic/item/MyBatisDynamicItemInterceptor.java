@@ -26,11 +26,11 @@ import java.util.Properties;
  * @since 2023/6/8 22:58
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
 })
 public class MyBatisDynamicItemInterceptor extends AbstractSqlVitaminMybatisInterceptor {
 
@@ -55,9 +55,12 @@ public class MyBatisDynamicItemInterceptor extends AbstractSqlVitaminMybatisInte
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigDynamicItem configDynamicItem = msIdExtractHelper.extractConfigDynamicItem(msId);
+    if (configDynamicItem == null) {
+      return invocation.proceed();
+    }
 
     try {
-      ConfigDynamicItem configDynamicItem = msIdExtractHelper.extractConfigDynamicItem(msId);
       DynamicItemConfigUtils.pushDynamicItem(configDynamicItem.propagation());
       DynamicItemConfigUtils.configDynamicItem(configDynamicItem, dataConvertorRegistry);
       return invocation.proceed();

@@ -20,10 +20,10 @@ import org.apache.ibatis.session.RowBounds;
  * @since 2023/6/8 22:58
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
 })
 public class MyBatisDynamicSuffixInterceptor extends AbstractSqlVitaminMybatisInterceptor {
 
@@ -39,9 +39,12 @@ public class MyBatisDynamicSuffixInterceptor extends AbstractSqlVitaminMybatisIn
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigDynamicSuffix configDynamicSuffix = msIdExtractHelper.extractConfigDynamicSuffix(msId);
+    if (configDynamicSuffix == null) {
+      return invocation.proceed();
+    }
 
     try {
-      ConfigDynamicSuffix configDynamicSuffix = msIdExtractHelper.extractConfigDynamicSuffix(msId);
       DynamicSuffixConfigUtils.pushDynamicSuffix(configDynamicSuffix.propagation());
       DynamicSuffixConfigUtils.configSuffixConfig(configDynamicSuffix);
       return invocation.proceed();

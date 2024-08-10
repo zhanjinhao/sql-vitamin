@@ -20,11 +20,11 @@ import org.apache.ibatis.session.RowBounds;
  * @since 2023/6/8 22:58
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
 })
 public class MyBatisDynamicConditionInterceptor extends AbstractSqlVitaminMybatisInterceptor {
 
@@ -41,9 +41,12 @@ public class MyBatisDynamicConditionInterceptor extends AbstractSqlVitaminMybati
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigDynamicCondition configDynamicCondition = msIdExtractHelper.extractConfigDynamicCondition(msId);
+    if (configDynamicCondition == null) {
+      return invocation.proceed();
+    }
 
     try {
-      ConfigDynamicCondition configDynamicCondition = msIdExtractHelper.extractConfigDynamicCondition(msId);
       DynamicConditionConfigUtils.pushDynamicCondition(configDynamicCondition.propagation());
       DynamicConditionConfigUtils.configDynamicCondition(configDynamicCondition);
       return invocation.proceed();

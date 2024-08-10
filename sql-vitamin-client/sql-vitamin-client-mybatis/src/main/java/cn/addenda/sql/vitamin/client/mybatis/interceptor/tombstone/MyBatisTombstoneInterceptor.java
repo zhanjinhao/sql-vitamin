@@ -20,11 +20,11 @@ import org.apache.ibatis.session.RowBounds;
  * @since 2023/6/10 14:06
  */
 @Intercepts({
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    @Signature(type = Executor.class, method = "query",
-        args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-    @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "query",
+                args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
 })
 public class MyBatisTombstoneInterceptor extends AbstractSqlVitaminMybatisInterceptor {
 
@@ -41,9 +41,12 @@ public class MyBatisTombstoneInterceptor extends AbstractSqlVitaminMybatisInterc
     Object[] args = invocation.getArgs();
     MappedStatement ms = (MappedStatement) args[0];
     String msId = ms.getId();
+    ConfigTombstone configTombstone = msIdExtractHelper.extractConfigTombstone(msId);
+    if (configTombstone == null) {
+      return invocation.proceed();
+    }
 
     try {
-      ConfigTombstone configTombstone = msIdExtractHelper.extractConfigTombstone(msId);
       TombstoneConfigUtils.pushTombstone(configTombstone.propagation());
       TombstoneConfigUtils.configTombstone(configTombstone);
       return invocation.proceed();
