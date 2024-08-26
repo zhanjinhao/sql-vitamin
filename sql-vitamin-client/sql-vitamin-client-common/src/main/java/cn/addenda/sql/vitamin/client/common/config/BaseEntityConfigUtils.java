@@ -28,7 +28,7 @@ public class BaseEntityConfigUtils {
     }
     Boolean selectDisable = baseEntityConfig.getSelectDisable();
     if (selectDisable != null) {
-      Propagation.configWithPropagation(propagation, disable,
+      Propagation.configWithPropagation(propagation, selectDisable,
           BaseEntityContext::setSelectDisable, BaseEntityContext::getSelectDisable);
     }
     Boolean compatibleMode = baseEntityConfig.getCompatibleMode();
