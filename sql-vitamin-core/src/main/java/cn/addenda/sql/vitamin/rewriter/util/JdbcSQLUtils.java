@@ -4,6 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * @author addenda
@@ -49,15 +52,18 @@ public class JdbcSQLUtils {
     return true;
   }
 
+  private static final Map<String, Pattern> PATTERN_MAP = new ConcurrentHashMap<>();
+
   /**
    * @param excluded excluded里的表一定返回false；
    * @param included included为null时，!excluded的表返回true；included不为null时，!excluded&included的表返回true。
    */
   public static boolean include(
-      String tableName, List<String> included, List<String> excluded) {
+          String tableName, List<String> included, List<String> excluded) {
     if (excluded != null) {
       for (String unContain : excluded) {
-        if (unContain.equalsIgnoreCase(tableName)) {
+        if (unContain.equalsIgnoreCase(tableName) ||
+                PATTERN_MAP.computeIfAbsent(unContain, Pattern::compile).matcher(tableName).matches()) {
           return false;
         }
       }
@@ -66,7 +72,8 @@ public class JdbcSQLUtils {
       return true;
     }
     for (String contain : included) {
-      if (contain.equalsIgnoreCase(tableName)) {
+      if (contain.equalsIgnoreCase(tableName) ||
+              PATTERN_MAP.computeIfAbsent(contain, Pattern::compile).matcher(tableName).matches()) {
         return true;
       }
     }
